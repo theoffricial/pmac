@@ -10,7 +10,7 @@
       "camelcase",
       "openapi",
       "pmac",
-      "pmac"
+      "unicop"
     ],
     "postman.workingDirectory": ".",
     "postman.testDefaultIterations": 3,
