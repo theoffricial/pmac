@@ -1,0 +1,17 @@
+*-debug.log
+*-error.
+/.pmac/private.json
+/.pmac/workspaces/personal
+/.nyc_output
+/dist
+/lib
+/package-lock.json
+/tmp
+/yarn.lock
+node_modules
+oclif.manifest.json
+/pmac-newman-reports
+/*.openapi.yml
+/.vscode
+
+/.pmac

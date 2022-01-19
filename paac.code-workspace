@@ -1,0 +1,58 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "pmac"
+    },
+  ],
+  "settings": {
+    "cSpell.words": [
+      "camelcase",
+      "openapi",
+      "pmac",
+      "pmac"
+    ],
+    "postman.workingDirectory": ".",
+    "postman.testDefaultIterations": 3,
+    "postman.showProgressInToolbar": true
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "type": "typescript",
+        "tsconfig": "./tsconfig.debug.json",
+        "problemMatcher": [
+          "$tsc"
+        ],
+        "group": "build",
+        "label": "tsc: build - tsconfig.debug.json"
+      }
+    ]
+  },
+  "launch": {
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Launch Program",
+        "program": "${workspaceFolder}/bin/run",
+        "args": [
+          "collection",
+          "create",
+          "--open-api",
+          "pokemon.openapi.yml"
+        ],
+        "preLaunchTask": "tsc: build - tsconfig.debug.json",
+        "outFiles": [
+          "${workspaceFolder}/dist/**/*.js",
+          "!**/node_modules/**"
+        ],
+        "sourceMaps": true,
+        "protocol": "inspector",
+        "console": "integratedTerminal"
+      }
+    ],
+    "compounds": []
+  },
+}

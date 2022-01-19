@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    // Unique for debugging
+    "sourceMap": true,
+    "outDir": "dist",
+    // other configs
+    "declaration": true,
+    // "importHelpers": true,
+    // "module": "commonjs",
+    // "target": "es6",
+    "module": "commonjs",
+    "rootDir": "src",
+    "strict": true,
+    "target": "es2019",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "src/local-types"
+    ],
+    "paths": {
+      "openapi-to-postmanv2": [
+        "./src/@types/openapi-to-postmanv2"
+      ]
+    },
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
