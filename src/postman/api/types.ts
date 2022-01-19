@@ -9,6 +9,7 @@ export interface PostmanEnvironment {
   values: {
     key: string;
     value: string | number;
+    type: 'text' | 'secret'
     enabled: boolean;
   }[];
   isPublic: boolean;
