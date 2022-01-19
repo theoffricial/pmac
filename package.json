@@ -1,6 +1,6 @@
 {
   "name": "pmac",
-  "description": "Manage your team's Postman as code.",
+  "description": "Manages your team's Postman as code.",
   "version": "0.0.0",
   "author": "unicop",
   "bin": {
