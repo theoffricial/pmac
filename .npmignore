@@ -1,0 +1,30 @@
+# workflows
+/.circleci
+/.github
+
+# .pmac
+/.pmac
+
+# IDE
+/.vscode
+pmac.code-workspace
+
+# code
+/src
+/test
+*.openpi.yml
+tsconfig*
+
+# lint
+.editorconfig
+eslint*
+
+# SVM
+.gitignore
+
+# test
+.mocha*
+
+# package management
+package-lock.json
+yarn.lock
