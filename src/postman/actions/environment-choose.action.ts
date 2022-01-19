@@ -8,13 +8,14 @@ implements IPmacAction<PostmanEnvironment> {
   constructor(
     private readonly _inquirer: Inquirer,
     private readonly environments: PostmanEnvironment[],
+    private readonly options: { customMessage?: string } = {},
   ) {}
 
   async run(): Promise<{ chosenEnvironment: PostmanEnvironment; }> {
-    if (!Array.isArray(this.environments) || this.environments.length === 0) {
-      throw new Error(EnvironmentChooseAction.name + ' invalid options passed.')
-    } else if (this.environments.length === 1) {
-      return { chosenEnvironment: this.environments[0] }
+    if (!Array.isArray(this.environments)) {
+      throw new TypeError(EnvironmentChooseAction.name + ' invalid options passed.')
+    } else if (this.environments.length === 0) {
+      throw new Error(EnvironmentChooseAction.name + ' no environments found.')
     }
 
     // When array is empty do nothing
@@ -26,7 +27,7 @@ implements IPmacAction<PostmanEnvironment> {
 
     const answer: { environment: PostmanEnvironment } =
       await this._inquirer.prompt({
-        message: 'Choose environment',
+        message: this.options?.customMessage || 'Choose environment',
         type: 'list',
         choices: choices.sort((a, b) => (a.name > b.name ? -1 : 1)),
         name: 'environment',

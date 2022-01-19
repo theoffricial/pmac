@@ -7,13 +7,14 @@ export class CollectionChooseAction implements IPmacAction<PostmanCollection> {
   constructor(
     private readonly _inquirer: Inquirer,
     private readonly collections: PostmanCollection[],
+    private readonly options: { customMessage?: string } = {},
   ) {}
 
   async run(): Promise<{ chosenCollection: PostmanCollection; }> {
-    if (!Array.isArray(this.collections) || this.collections.length === 0) {
-      throw new Error(CollectionChooseAction.name + ' invalid options passed.')
-    } else if (this.collections.length === 1) {
-      return { chosenCollection: this.collections[0] }
+    if (!Array.isArray(this.collections)) {
+      throw new TypeError(CollectionChooseAction.name + ' invalid options passed.')
+    } else if (this.collections.length === 0) {
+      throw new Error(CollectionChooseAction.name + ' no collections found.')
     }
 
     // When array is empty do nothing
@@ -27,7 +28,7 @@ export class CollectionChooseAction implements IPmacAction<PostmanCollection> {
 
     const answer: { collection: PostmanCollection } =
       await this._inquirer.prompt({
-        message: 'Choose collection',
+        message: this.options?.customMessage || 'Choose collection',
         type: 'list',
         choices: choices.sort((a, b) => (a.name > b.name ? -1 : 1)),
         name: 'collection',
