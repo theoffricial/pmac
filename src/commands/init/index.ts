@@ -1,6 +1,7 @@
 import { Command, Flags } from '@oclif/core'
-import { PmacConfigurationManager } from '../../file-system'
 import Listr from 'listr'
+import { PmacConfigurationManager } from '../../file-system'
+import { pmakValidator } from '../../validators'
 
 export default class PmacInit extends Command {
   static description = 'Initial pmac environment'
@@ -28,6 +29,17 @@ export default class PmacInit extends Command {
     const { flags } = await this.parse(PmacInit)
     const config = new PmacConfigurationManager()
     const tasks = new Listr([
+      {
+        title: 'Validating api key',
+        task: (ctx, task) => {
+          const apiKey = flags['api-key']
+          const validApiKey = pmakValidator(apiKey)
+
+          if (!validApiKey) {
+            this.error('Invalid PMAK')
+          }
+        },
+      },
       {
         title: 'Initial .pmac environment',
         task: (ctx, task) => {
