@@ -35,7 +35,7 @@ export default class WorkspaceDelete extends Command {
     const { chosenWorkspace } = await new WorkspaceChooseAction(
       inquirer,
       localWorkspaces,
-      { message: 'Choose workspace to delete' },
+      { customMessage: 'Choose workspace to delete' },
     ).run()
 
     let deleted
