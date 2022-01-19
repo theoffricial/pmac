@@ -329,7 +329,7 @@ _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.9
 
 ## `pmac init`
 
-Initialpmac environment
+Initial pmac environment
 
 ```
 USAGE
@@ -341,7 +341,7 @@ FLAGS
                          please generate it at: https://learning.postman.com/docs/developer/intro-api/
 
 DESCRIPTION
-  Initialpmac environment
+  Initial pmac environment
 
 EXAMPLES
   $pmac init --api-key "your-pm-api-key"

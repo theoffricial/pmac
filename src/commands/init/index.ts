@@ -3,7 +3,7 @@ import { PmacConfigurationManager } from '../../file-system'
 import Listr from 'listr'
 
 export default class PmacInit extends Command {
-  static description = 'Initialpmac environment'
+  static description = 'Initial pmac environment'
 
   static examples = [
     `$pmac init --api-key "your-pm-api-key"
