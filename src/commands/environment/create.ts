@@ -43,6 +43,7 @@ export default class EnvironmentCreate extends Command {
           enabled: true,
           key: 'exampleVariable',
           value: '42',
+          type: 'text',
         },
       ],
     }
