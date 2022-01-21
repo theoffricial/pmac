@@ -3,7 +3,6 @@ import { CollectionChooseAction, CollectionPushAction } from '.'
 import { PostmanAPI } from '../api'
 import {
   PostmanWorkspace,
-  PostmanWorkspaceMetadata as workspace,
 } from '../api/types/workspace.types'
 import { PmacConfigurationManager } from '../../file-system'
 import { IPmacAction } from './action.interface'
@@ -21,10 +20,15 @@ export class CollectionHandleDuplicationAction implements IPmacAction<boolean | 
     private readonly collectionName: string,
   ) {}
 
-  async run() {
+  async run(): Promise<{
+    detectDuplication: boolean;
+    userDecidedToUpdateInstead: boolean;
+    duplicateCollections: PostmanCollection[];
+  }> {
     const matches = await this.config.getWorkspaceResourcesPaths(
       this.workspace,
       `collections/${this.collectionName} [*`,
+      { nocase: true },
     )
 
     // When no existing collection found
@@ -54,13 +58,6 @@ export class CollectionHandleDuplicationAction implements IPmacAction<boolean | 
       this.inquirer,
       duplicateCollections,
     ).run()
-
-    // const { openApiSpec } = await this.inquirer.prompt({
-    //   type: "input",
-    //   message:
-    //     "Please insert the relative path to your OpenAPI specification. \n[e.g. file in working directory './my-open-api-file.yml']",
-    //   name: "openApiSpec",
-    // });
 
     const { collectionMetadata } = await new CollectionGetMetadataAction(
       this.workspace,
