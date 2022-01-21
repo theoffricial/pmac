@@ -4,14 +4,21 @@ import { PmacConfigurationManager } from '../../file-system'
 import { CollectionChooseAction, CollectionGetAllLocalAction, EnvironmentChooseAction, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
 import { EnvironmentGetAllLocalAction } from '../../postman/actions/environment-get-all-local.action'
 import newman from 'newman'
-import { environmentPathValidator } from '../../validators'
+import { collectionPathValidator, environmentPathValidator } from '../../validators'
 import { PostmanEnvironment } from '../../postman/api/types'
+import { PostmanCollection } from '../../postman/api/types/collection.types'
 
 export default class CollectionRun extends Command {
   static description = 'Runs PM collection'
 
   static examples = [
     `$pmac collection run
+`,
+    `pmac collection run --environment ./.pmac/workspaces/personal/my-workspace/environments/my-environment.postman_environment.json
+`,
+    `pmac collection run --environment=skip
+`,
+    `pmac collection run --collection ./.pmac/workspaces/personal/my-workspace/collections/my-collection.postman_collection.json
 `,
   ]
 
@@ -60,28 +67,42 @@ export default class CollectionRun extends Command {
       localWorkspaces,
     ).run()
 
-    const { localCollections } = await new CollectionGetAllLocalAction(
-      config,
-      chosenWorkspace,
-    ).run()
+    // Environment
+    let collectionJson: PostmanCollection | null = null
+    if (flags.collection) {
+      if (!collectionPathValidator(flags.collection)) {
+        this.error('collection path is invalid, please use .pmac valid collection path')
+      }
+    } else {
+      const { localCollections } = await new CollectionGetAllLocalAction(
+        config,
+        chosenWorkspace,
+      ).run()
 
-    if (localCollections.length === 0) {
-      throw new Error(
-        `No collections found for workspace '${chosenWorkspace.name}'`,
-      )
+      if (localCollections.length === 0) {
+        throw new Error(
+          `No collections found for workspace '${chosenWorkspace.name}'`,
+        )
+      }
+
+      const { chosenCollection } = await new CollectionChooseAction(
+        inquirer,
+        localCollections,
+      ).run()
+
+      collectionJson = chosenCollection
     }
-
-    const { chosenCollection } = await new CollectionChooseAction(
-      inquirer,
-      localCollections,
-    ).run()
 
     // Environment
     let environmentJson: PostmanEnvironment | null = null
-    if (flags.environment) {
+    const SKIP_ENVIRONMENT = 'skip'
+    if (flags.environment && flags.environment !== SKIP_ENVIRONMENT) {
       if (!environmentPathValidator(flags.environment)) {
         this.error('environment path is invalid, please use .pmac valid environment path')
       }
+    } else if (flags.environment === SKIP_ENVIRONMENT) {
+      // skipping environment
+      flags.environment = ''
     } else {
       // if (!commandAndOptions.environment) {
       const { localEnvironments } = await new EnvironmentGetAllLocalAction(
@@ -101,7 +122,7 @@ export default class CollectionRun extends Command {
     // TODO: function that calculates reports
     const reporters = {}
     newman.run({
-      collection: flags.collection || chosenCollection,
+      collection: flags.collection || collectionJson,
       environment: flags.environment || environmentJson || '',
       iterationCount: Number(flags['iteration-count'] || 1),
       reporters: flags?.reporters?.replace('html', 'htmlextra').split(',') || [
