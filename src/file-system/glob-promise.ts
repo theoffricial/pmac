@@ -1,8 +1,9 @@
 import glob from 'glob'
 
-export const globPromise = async (pattern: string): Promise<string[]> => {
+export type GlobPromiseOptions = glob.IOptions;
+export const globPromise = async (pattern: string, options: glob.IOptions = {}): Promise<string[]> => {
   return new Promise((resolve, reject) => {
-    glob(pattern, (err, matches) => {
+    glob(pattern, options, (err, matches) => {
       err ? reject(err) : resolve(matches)
     })
   })
@@ -10,10 +11,11 @@ export const globPromise = async (pattern: string): Promise<string[]> => {
 
 export const globMultiPromise = async (
   patterns: string[],
+  options: glob.IOptions = {},
 ): Promise<string[]> => {
   const promises = []
   for (const pattern of patterns) {
-    promises.push(globPromise(pattern))
+    promises.push(globPromise(pattern, options))
   }
 
   const matchers = await Promise.all(promises)

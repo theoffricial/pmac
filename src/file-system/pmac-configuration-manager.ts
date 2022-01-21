@@ -13,7 +13,7 @@ import {
   WorkspaceResource,
   WorkspaceType,
 } from '../postman/api/types/workspace.types'
-import { globMultiPromise, globPromise } from './glob-promise'
+import { globMultiPromise, globPromise, type GlobPromiseOptions } from './glob-promise'
 // const __dirname = dirname(fileURLToPath(import.meta.url));
 
 interface PmacOptions {
@@ -194,7 +194,25 @@ export default class PmacConfigurationManager {
 
   // Workspaces
 
-  async getWorkspaces(type?: WorkspaceType) {
+  async getWorkspacesPathsByName(workspaceName: string, type?: WorkspaceType, options: GlobPromiseOptions = {}): Promise<{ workspacesPaths: string[]; }> {
+    const patterns = []
+    const personalPattern = `${this.workspacesDir}/${WorkspaceType.Personal}/${workspaceName} [*`
+    const teamPattern = `${this.workspacesDir}/${WorkspaceType.Team}/${workspaceName} [*`
+
+    if (type === WorkspaceType.Personal) {
+      patterns.push(personalPattern)
+    } else if (type === WorkspaceType.Team) {
+      patterns.push(teamPattern)
+    } else {
+      patterns.push(personalPattern, teamPattern)
+    }
+
+    const matches = await globMultiPromise(patterns, options)
+
+    return { workspacesPaths: matches }
+  }
+
+  async getWorkspacesPaths(type?: WorkspaceType): Promise<{ workspacesPaths: string[]; }> {
     const patterns = []
     const personalPattern = `${this.workspacesDir}/${WorkspaceType.Personal}/**/${this.workspaceMetadataFileName}`
     const teamPattern = `${this.workspacesDir}/${WorkspaceType.Team}/**/${this.workspaceMetadataFileName}`
@@ -209,8 +227,13 @@ export default class PmacConfigurationManager {
 
     const matches = await globMultiPromise(patterns)
 
+    return { workspacesPaths: matches }
+  }
+
+  async getWorkspaces(type?: WorkspaceType): Promise<{ localWorkspaces: PostmanWorkspace[]; }> {
+    const { workspacesPaths } = await this.getWorkspacesPaths(type)
     const workspaces: PostmanWorkspace[] = []
-    for (const match of matches) {
+    for (const match of workspacesPaths) {
       workspaces.push(this.readJsonFileSync(match))
     }
 
@@ -277,7 +300,11 @@ export default class PmacConfigurationManager {
     return this.getWorkspace({ name, id, type: workspaceType })
   }
 
-  deleteWorkspace(workspaceMetadata: PostmanWorkspaceMetadata) {
+  getWorkspacesByPath(paths: string[]): PostmanWorkspace[] {
+    return paths.map(path => this.getWorkspaceByPath(path))
+  }
+
+  deleteWorkspace(workspaceMetadata: PostmanWorkspaceMetadata): { deletedWorkspace: PostmanWorkspaceMetadata; } {
     const workspaceDir = this.getWorkspacePath(workspaceMetadata)
     fs.rmSync(workspaceDir, { recursive: true, force: true })
 
@@ -418,11 +445,12 @@ export default class PmacConfigurationManager {
   async getWorkspaceResourcesPaths(
     workspaceMetadata: PostmanWorkspaceMetadata,
     pattern: string,
-  ) {
+    options: GlobPromiseOptions = {},
+  ): Promise<string[]> {
     const workspaceResourcePattern = `${this.getWorkspacePath(
       workspaceMetadata,
     )}/${pattern}`
-    const resourcesPaths = await globPromise(workspaceResourcePattern)
+    const resourcesPaths = await globPromise(workspaceResourcePattern, options)
 
     return resourcesPaths
   }
