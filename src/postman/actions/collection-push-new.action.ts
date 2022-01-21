@@ -14,7 +14,7 @@ export class CollectionPushNewAction implements IPmacAction<PostmanCollection> {
     private readonly collection: PostmanCollection,
   ) {}
 
-  async run() {
+  async run(): Promise<{ collection: PostmanCollection; }> {
     const {
       data: { collection: collectionMetadata },
     } = await this.postmanApi.collections.createCollection(this.workspace.id, {
