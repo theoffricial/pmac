@@ -22,7 +22,7 @@ $ npm install -g pmac
 $ pmac COMMAND
 running command...
 $ pmac (--version)
-pmac/0.0.2 darwin-x64 node-v14.17.1
+pmac/0.0.3 darwin-x64 node-v14.17.1
 $ pmac --help [COMMAND]
 USAGE
   $ pmac COMMAND
@@ -291,7 +291,7 @@ EXAMPLES
   hello friend from oclif! (./src/commands/hello/index.ts)
 ```
 
-_See code: [dist/commands/hello/index.ts](https://github.com/unicop/pmac/blob/v0.0.2/dist/commands/hello/index.ts)_
+_See code: [dist/commands/hello/index.ts](https://github.com/unicop/pmac/blob/v0.0.3/dist/commands/hello/index.ts)_
 
 ## `pmac hello world`
 
@@ -351,7 +351,7 @@ EXAMPLES
   $pmac init -k "your-pm-api-key"
 ```
 
-_See code: [dist/commands/init/index.ts](https://github.com/unicop/pmac/blob/v0.0.2/dist/commands/init/index.ts)_
+_See code: [dist/commands/init/index.ts](https://github.com/unicop/pmac/blob/v0.0.3/dist/commands/init/index.ts)_
 
 ## `pmac plugins`
 
