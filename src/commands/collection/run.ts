@@ -4,6 +4,8 @@ import { PmacConfigurationManager } from '../../file-system'
 import { CollectionChooseAction, CollectionGetAllLocalAction, EnvironmentChooseAction, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
 import { EnvironmentGetAllLocalAction } from '../../postman/actions/environment-get-all-local.action'
 import newman from 'newman'
+import { environmentPathValidator } from '../../validators'
+import { PostmanEnvironment } from '../../postman/api/types'
 
 export default class CollectionRun extends Command {
   static description = 'Runs PM collection'
@@ -74,24 +76,33 @@ export default class CollectionRun extends Command {
       localCollections,
     ).run()
 
-    // if (!commandAndOptions.environment) {
-    const { localEnvironments } = await new EnvironmentGetAllLocalAction(
-      config,
-      chosenWorkspace,
-    ).run()
+    // Environment
+    let environmentJson: PostmanEnvironment | null = null
+    if (flags.environment) {
+      if (!environmentPathValidator(flags.environment)) {
+        this.error('environment path is invalid, please use .pmac valid environment path')
+      }
+    } else {
+      // if (!commandAndOptions.environment) {
+      const { localEnvironments } = await new EnvironmentGetAllLocalAction(
+        config,
+        chosenWorkspace,
+      ).run()
 
-    const { chosenEnvironment } = await new EnvironmentChooseAction(inquirer, [
-      ...localEnvironments,
-    // skip option
-    { name: '[skip]', id: '' } as any,
-    ]).run()
+      const { chosenEnvironment } = await new EnvironmentChooseAction(inquirer, [
+        ...localEnvironments,
+        // skip option
+        { name: '[skip]', id: '' } as any,
+      ]).run()
+
+      environmentJson = chosenEnvironment
+    }
 
     // TODO: function that calculates reports
     const reporters = {}
-
     newman.run({
-      collection: flags?.collection || chosenCollection,
-      environment: flags?.environment || chosenEnvironment || '',
+      collection: flags.collection || chosenCollection,
+      environment: flags.environment || environmentJson || '',
       iterationCount: Number(flags['iteration-count'] || 1),
       reporters: flags?.reporters?.replace('html', 'htmlextra').split(',') || [
         'cli',
