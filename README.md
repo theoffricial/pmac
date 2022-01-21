@@ -1,13 +1,15 @@
-pmac - Postman as code
+**pmac** - Postman as code
 =================
+
+A CLI tool that enable managing postman workspaces and objects automatically as code, and auto-generated from OpenAPI v3 (swagger).
 
 pmac CLI
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/oclif-hello-world.svg)](https://npmjs.org/package/oclif-hello-world)
+[![Version](https://img.shields.io/npm/v/pmac.svg)](https://npmjs.org/package/pmac)
 [![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
-[![Downloads/week](https://img.shields.io/npm/dw/oclif-hello-world.svg)](https://npmjs.org/package/oclif-hello-world)
-[![License](https://img.shields.io/npm/l/oclif-hello-world.svg)](https://github.com/oclif/hello-world/blob/main/package.json)
+[![Downloads/week](https://img.shields.io/npm/dw/oclif-hello-world.svg)](https://npmjs.org/package/pmac)
+[![License](https://img.shields.io/npm/l/oclif-hello-world.svg)](https://github.com/unicop/pmac/blob/main/package.json)
 
 <!-- toc -->
 * [Usage](#usage)
