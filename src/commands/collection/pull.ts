@@ -54,8 +54,9 @@ export default class CollectionPull extends Command {
       chosenCollection.uid,
     ).run()
 
+    const pmacName = config.resourceNameConvention(chosenCollection.name, chosenCollection.uid)
     this.log(
-      `Collection ${chosenCollection.name} [uid: ${chosenCollection.uid}] pulled into repository.`,
+      `Collection ${pmacName} pulled into repository.`,
     )
   }
 }

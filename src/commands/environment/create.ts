@@ -56,7 +56,7 @@ export default class EnvironmentCreate extends Command {
     ).run()
 
     this.log(
-      `Environment ${environment.name} [id: ${environment.id}] created successfully.`,
+      `Environment ${environment.name} created successfully.`,
     )
   }
 }

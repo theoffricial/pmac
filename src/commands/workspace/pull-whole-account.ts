@@ -27,10 +27,6 @@ export default class PullWholeAccount extends Command {
     const fetchedActionPromises = []
     for (const localWorkspace of workspacesMetadata) {
       fetchedActionPromises.push(new WorkspaceFetchAction(postmanApiInstance, localWorkspace.id).run())
-
-      // console.log(
-      //   `Local workspace [${localWorkspace.name}[type:${localWorkspace.type}][id:${localWorkspace.id}]] pull (fetching) starting...`,
-      // )
     }
 
     const fetchedWorkspaces = await Promise.all(fetchedActionPromises)

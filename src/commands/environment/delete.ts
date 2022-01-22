@@ -44,15 +44,17 @@ export default class EnvironmentDelete extends Command {
       environmentsMetadata,
     ).run()
 
+    const pmacEnvironmentName = config.resourceNameConvention(chosenEnvironment.name, chosenEnvironment.uid)
+
     if (flags['local-only']) {
       const { deletedEnvironment } = await new EnvironmentDeleteLocalAction(config, chosenWorkspace, chosenEnvironment.uid).run()
       this.log(
-        `Environment ${chosenEnvironment.name} [uid: ${chosenEnvironment.uid}] deleted from .pmac (repository).`,
+        `Environment ${pmacEnvironmentName} deleted from .pmac (repository).`,
       )
     } else if (flags['remote-only']) {
       const { deletedEnvironment } = await new EnvironmentDeleteRemoteAction(config, postmanApiInstance, chosenWorkspace, chosenEnvironment.uid).run()
       this.log(
-        `Environment ${chosenEnvironment.name} [uid: ${deletedEnvironment.uid}] deleted from your PM account (remote).`,
+        `Environment ${pmacEnvironmentName} deleted from your PM account (remote).`,
       )
     } else {
       const { deletedEnvironment } = await new EnvironmentDeleteAction(
@@ -63,7 +65,7 @@ export default class EnvironmentDelete extends Command {
       ).run()
 
       this.log(
-        `Environment ${chosenEnvironment.name} [uid: ${deletedEnvironment.uid}] deleted from both your PM account (remote) and .pmac (repository).`,
+        `Environment ${pmacEnvironmentName} deleted from both your PM account (remote) and ${config.PMAC_FOLDER_NAME} (repository).`,
       )
     }
   }

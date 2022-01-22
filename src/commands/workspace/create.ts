@@ -32,8 +32,9 @@ export default class WorkspaceCreate extends Command {
       postmanApiInstance,
     ).run()
 
+    const pmacName = config.workspaceNameConvention(newWorkspace.name, newWorkspace.id)
     console.log(
-      `Workspace ${newWorkspace.name} [id: ${newWorkspace.id}] created for both postman account and repository successfully.`,
+      `Workspace ${pmacName} created for both postman account and repository successfully.`,
     )
 
     // this.log('.pmac environment initial successfully!')

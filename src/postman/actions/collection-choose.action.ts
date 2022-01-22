@@ -20,9 +20,7 @@ export class CollectionChooseAction implements IPmacAction<PostmanCollection> {
     // When array is empty do nothing
     const choices = this.collections.map(collection => ({
       key: `${pad(collection.info.name, 30)}`,
-      name: `${pad(collection.info.name, 30)} [id:${
-        collection.info._postman_id
-      }]`,
+      name: `${pad(collection.info.name, 30)} [id:${collection.info._postman_id}]`,
       value: collection,
     }))
 

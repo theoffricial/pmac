@@ -54,8 +54,9 @@ export default class EnvironmentPull extends Command {
       chosenEnvironment.uid,
     ).run()
 
+    const pmacEnvironmentName = config.resourceNameConvention(chosenEnvironment.name, chosenEnvironment.uid)
     this.log(
-      `Environment ${chosenEnvironment.name} [uid: ${chosenEnvironment.uid}] pulled into repository.`,
+      `Environment ${pmacEnvironmentName} pulled into repository.`,
     )
   }
 }

@@ -31,7 +31,7 @@ export default class CollectionRun extends Command {
     }),
     environment: Flags.string({
       char: 'e',
-      description: 'Relative path to your .pmac environment defined JSON',
+      description: 'Relative path to your .pmac environment defined JSON, to skip environment step, set it to "skip"',
       required: false,
       default: '',
     }),

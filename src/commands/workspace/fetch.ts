@@ -5,10 +5,10 @@ import { postmanApiInstance } from '../../postman/api'
 import { PmacConfigurationManager } from '../../file-system'
 
 export default class WorkspaceFetchPulled extends Command {
-  static description = 'Fetches pulled workspace to be up-to-date.'
+  static description = 'Fetches all pulled workspaces up-to-date.'
 
   static examples = [
-    `$pmac workspace fetch-pulled
+    `$pmac workspace fetch
 `,
   ]
 
@@ -22,8 +22,10 @@ export default class WorkspaceFetchPulled extends Command {
 
     const promises = []
     for (const localWorkspace of localWorkspaces) {
+      const pmacName = config.workspaceNameConvention(localWorkspace.name, localWorkspace.id)
+
       console.log(
-        `Local workspace [${localWorkspace.name}[type:${localWorkspace.type}][id:${localWorkspace.id}]] pull (fetching) starting...`,
+        `Local workspace ${pmacName} (${localWorkspace.type}) fetch starting...`,
       )
       promises.push(
         new WorkspacePullAction(config, postmanApiInstance, localWorkspace).run(),

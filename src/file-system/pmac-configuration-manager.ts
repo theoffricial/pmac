@@ -1,4 +1,3 @@
-// import { fileURLToPath } from 'url';
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import fs from 'fs'
 // eslint-disable-next-line unicorn/prefer-node-protocol
@@ -14,7 +13,6 @@ import {
   WorkspaceType,
 } from '../postman/api/types/workspace.types'
 import { globMultiPromise, globPromise, type GlobPromiseOptions } from './glob-promise'
-// const __dirname = dirname(fileURLToPath(import.meta.url));
 
 interface PmacOptions {
   /** Force to overwrite */
@@ -23,44 +21,50 @@ interface PmacOptions {
 
 export default class PmacConfigurationManager {
   /** Gets client's working directory */
-  private repositoryWorkspaceDir = path.resolve('./');
+  private REPOSITORY_ROOT_FOLDER_PATH = path.resolve('.');
 
-  private pmacDir = `${this.repositoryWorkspaceDir}/.pmac`;
-  private workspacesDirName = 'workspaces';
-  private workspacesDir = `${this.pmacDir}/${this.workspacesDirName}`;
+  PMAC_LIB_NAME = 'pmac'
+  PMAC_FOLDER_NAME = `.${this.PMAC_LIB_NAME}`;
+  private PMAC_FOLDER_PATH = `${this.REPOSITORY_ROOT_FOLDER_PATH}/${this.PMAC_FOLDER_NAME}`;
+  private WORKSPACES_FOLDER_NAME = 'workspaces';
+  private WORKSPACES_FOLDER_PATH = `${this.PMAC_FOLDER_PATH}/${this.WORKSPACES_FOLDER_NAME}`;
 
-  private privateConfigFile = 'private.json';
-  private privateConfigFilePath = `${this.pmacDir}/${this.privateConfigFile}`;
+  private PRIVATE_CONFIG_FILE_NAME = 'private.json';
+  private PRIVATE_CONFIG_FILE_PATH = `${this.PMAC_FOLDER_PATH}/${this.PRIVATE_CONFIG_FILE_NAME}`;
 
-  private personalWorkspacesDir = `${this.workspacesDir}/${WorkspaceType.Personal}`;
-  private teamWorkspacesDir = `${this.workspacesDir}/${WorkspaceType.Team}`;
+  private PERSONAL_WORKSPACES_FOLDER_PATH = `${this.WORKSPACES_FOLDER_PATH}/${WorkspaceType.Personal}`;
+  private TEAM_WORKSPACES_FOLDER_PATH = `${this.WORKSPACES_FOLDER_PATH}/${WorkspaceType.Team}`;
 
   // Workspace structure constants
-  private workspaceMetadataFileName = 'workspace.json';
-  private postmanResourcePrefix = 'postman_';
-  private collectionsPattern = `${WorkspaceResource.Collection}s/*.${this.postmanResourcePrefix}${WorkspaceResource.Collection}.json`;
-  private environmentsPattern = `${WorkspaceResource.Environment}s/*.${this.postmanResourcePrefix}${WorkspaceResource.Environment}.json`;
+  private WORKSPACE_METADATA_FILE_NAME = 'workspace.json';
+  private POSTMAN_RESOURCE_PREFIX = 'postman_';
+  private ALL_COLLECTIONS_PATTERN = `${WorkspaceResource.Collection}s/*.${this.POSTMAN_RESOURCE_PREFIX}${WorkspaceResource.Collection}.json`;
+  private ALL_ENVIRONMENT_PATTERN = `${WorkspaceResource.Environment}s/*.${this.POSTMAN_RESOURCE_PREFIX}${WorkspaceResource.Environment}.json`;
+
+  allResourcesByNamePattern(type: WorkspaceResource, name: string): string {
+    return `${type}s/${name}${this.W_RESOURCE_UID_PATTERN}*`
+  }
 
   // Errors
 
-  private pmacNotFoundError = new Error(
-    "pmac not initialized, please use 'pmac init' to start usingpmac.",
+  private PMAC_NOT_FOUND_ERROR = new Error(
+    `${this.PMAC_LIB_NAME} not initialized, please use 'pmac init' to start using pmac.`,
   );
 
-  private pmacWorkspaceAlreadyExists = new Error(
-    'Workspace name already exists.',
+  private PMAC_WORKSPACE_ALREADY_EXISTS_ERROR = new Error(
+    `${this.PMAC_LIB_NAME} Workspace name already exists.`,
   );
 
-  private pmacResourceAlreadyExistsError = new Error(
-    '.pmac resource already exists.',
+  private PMAC_W_RESOURCE_ALREADY_EXISTS_ERROR = new Error(
+    `${this.PMAC_LIB_NAME} resource already exists.`,
   );
 
-  private pmacPrivateAlreadyExists = new Error(
-    '.pmac private configuration already exists.',
+  private PMAC_PRIVATE_ALREADY_EXISTS_ERROR = new Error(
+    `${this.PMAC_LIB_NAME} private configuration already exists.`,
   );
 
-  private pmacAlreadyInitialized = new Error(
-    ".pmac already initialized, you can turn 'force' flag to overwrite existing configuration.",
+  private PMAC_ALREADY_INITIALIZED_ERROR = new Error(
+    `${this.PMAC_LIB_NAME} already initialized, you can turn 'force' flag to overwrite existing configuration.`,
   );
 
   // Utils
@@ -99,68 +103,71 @@ export default class PmacConfigurationManager {
   }
 
   exists(): boolean {
-    return fs.existsSync(this.pmacDir)
+    return fs.existsSync(this.PMAC_FOLDER_PATH)
   }
 
   // Configuration Basic Structure
 
-  createPmacDir(options?:PmacOptions) {
+  createPmacDir(options?:PmacOptions): void {
     if (options?.force) {
-      fs.rmSync(this.pmacDir, { recursive: true, force: true })
+      fs.rmSync(this.PMAC_FOLDER_PATH, { recursive: true, force: true })
     } else if (this.exists()) {
-      throw this.pmacAlreadyInitialized
+      throw this.PMAC_ALREADY_INITIALIZED_ERROR
     }
 
-    fs.mkdirSync(this.pmacDir)
+    fs.mkdirSync(this.PMAC_FOLDER_PATH)
   }
 
-  createPmacWorkspacesDir() {
-    fs.mkdirSync(this.workspacesDir)
+  createPmacWorkspacesDir(): void {
+    fs.mkdirSync(this.WORKSPACES_FOLDER_PATH)
   }
 
-  createPmacPrivateConfig() {
-    if (fs.existsSync(this.privateConfigFilePath)) {
-      throw this.pmacPrivateAlreadyExists
+  createPmacPrivateConfig(): void {
+    if (fs.existsSync(this.PRIVATE_CONFIG_FILE_PATH)) {
+      throw this.PMAC_PRIVATE_ALREADY_EXISTS_ERROR
     }
 
     const initialPrivate = {
       apiKey: '',
     }
-    fs.writeFileSync(
-      this.privateConfigFilePath,
-      JSON.stringify(initialPrivate, null, 2),
-      'utf8',
-    )
+
+    this.writeJsonFileSync(this.PRIVATE_CONFIG_FILE_PATH, initialPrivate)
+
     // Append .gitignore
-    const gitIgnorePattern = this.getGitIgnorePattern(this.privateConfigFile)
+    const gitIgnorePattern = this.getPmacGitIgnorePattern(this.PRIVATE_CONFIG_FILE_NAME)
     this.appendGitIgnore(gitIgnorePattern)
   }
 
-  private getGitIgnorePattern(pattern: string) {
-    return `/.pmac/${pattern}`
+  private getPmacGitIgnorePattern(pattern: string): string {
+    return `/${this.PMAC_FOLDER_NAME}/${pattern}`
   }
 
+  private GIT_IGNORE_FILE_PATH = `${this.REPOSITORY_ROOT_FOLDER_PATH}/.gitignore`
   private appendGitIgnore(patternToAppend: string) {
-    const gitIgnorePath = `${this.repositoryWorkspaceDir}/.gitignore`
+    // check private
+    // check personal
+    // check comment
 
-    if (!fs.existsSync(gitIgnorePath)) {
+    if (!fs.existsSync(this.GIT_IGNORE_FILE_PATH)) {
       // no .gitignore, not appending.
       return
     }
 
-    const fileContent = fs.readFileSync(gitIgnorePath, 'utf8')
-    const GIT_IGNORE_PMAC_COMMENT = '# .pmac configuration'
-    if (!fileContent.includes(GIT_IGNORE_PMAC_COMMENT)) {
-      fs.appendFileSync(gitIgnorePath, `\n${GIT_IGNORE_PMAC_COMMENT}`)
+    const content = fs.readFileSync(this.GIT_IGNORE_FILE_PATH, 'utf8')
+
+    const GIT_IGNORE_PMAC_COMMENT = `# ${this.PMAC_FOLDER_NAME}`
+
+    if (!content.includes(GIT_IGNORE_PMAC_COMMENT)) {
+      fs.appendFileSync(this.GIT_IGNORE_FILE_PATH, `\n\n${GIT_IGNORE_PMAC_COMMENT}`)
     }
 
     const appendPosition =
-      fileContent.indexOf(GIT_IGNORE_PMAC_COMMENT) +
+      content.indexOf(GIT_IGNORE_PMAC_COMMENT) +
       GIT_IGNORE_PMAC_COMMENT.length
 
-    const sub = fileContent.slice(Math.max(0, appendPosition))
+    const sub = content.slice(Math.max(0, appendPosition))
 
-    const file = fs.openSync(gitIgnorePath, 'r+')
+    const file = fs.openSync(this.GIT_IGNORE_FILE_PATH, 'r+')
     const bufferedText = Buffer.from(`\n${patternToAppend}` + sub)
 
     fs.writeSync(file, bufferedText, 0, bufferedText.length, appendPosition)
@@ -170,34 +177,42 @@ export default class PmacConfigurationManager {
   // User Settings
 
   saveApiKey(apiKey: string): void {
-    const privateJson = this.readJsonFileSync(this.privateConfigFilePath)
+    const privateJson = this.readJsonFileSync(this.PRIVATE_CONFIG_FILE_PATH)
 
     privateJson.apiKey = apiKey
 
-    this.writeJsonFileSync(this.privateConfigFilePath, privateJson)
+    this.writeJsonFileSync(this.PRIVATE_CONFIG_FILE_PATH, privateJson)
   }
 
-  deleteApiKey() {
-    const privateJson = this.readJsonFileSync(this.privateConfigFilePath)
+  deleteApiKey(): void {
+    const privateJson = this.readJsonFileSync(this.PRIVATE_CONFIG_FILE_PATH)
     delete privateJson.apiKey
 
-    this.writeJsonFileSync(this.privateConfigFilePath, privateJson)
+    this.writeJsonFileSync(this.PRIVATE_CONFIG_FILE_PATH, privateJson)
   }
 
   getPrivate(): { apiKey?: string } {
-    return this.readJsonFileSync(this.privateConfigFilePath)
+    return this.readJsonFileSync(this.PRIVATE_CONFIG_FILE_PATH)
   }
 
   isPrivateExists(): boolean {
-    return fs.existsSync(this.privateConfigFilePath)
+    return fs.existsSync(this.PRIVATE_CONFIG_FILE_PATH)
   }
 
   // Workspaces
 
+  public workspacePersonalPattern(workspaceName: string): string {
+    return `${this.WORKSPACES_FOLDER_PATH}/${WorkspaceType.Personal}/${workspaceName}${this.WORKSPACE_ID_PATTERN}*`
+  }
+
+  public workspaceTeamPattern(workspaceName: string): string {
+    return `${this.WORKSPACES_FOLDER_PATH}/${WorkspaceType.Team}/${workspaceName}${this.WORKSPACE_ID_PATTERN}*`
+  }
+
   async getWorkspacesPathsByName(workspaceName: string, type?: WorkspaceType, options: GlobPromiseOptions = {}): Promise<{ workspacesPaths: string[]; }> {
     const patterns = []
-    const personalPattern = `${this.workspacesDir}/${WorkspaceType.Personal}/${workspaceName} [*`
-    const teamPattern = `${this.workspacesDir}/${WorkspaceType.Team}/${workspaceName} [*`
+    const personalPattern = this.workspacePersonalPattern(workspaceName)
+    const teamPattern = this.workspaceTeamPattern(workspaceName)
 
     if (type === WorkspaceType.Personal) {
       patterns.push(personalPattern)
@@ -214,8 +229,8 @@ export default class PmacConfigurationManager {
 
   async getWorkspacesPaths(type?: WorkspaceType): Promise<{ workspacesPaths: string[]; }> {
     const patterns = []
-    const personalPattern = `${this.workspacesDir}/${WorkspaceType.Personal}/**/${this.workspaceMetadataFileName}`
-    const teamPattern = `${this.workspacesDir}/${WorkspaceType.Team}/**/${this.workspaceMetadataFileName}`
+    const personalPattern = `${this.WORKSPACES_FOLDER_PATH}/${WorkspaceType.Personal}/**/${this.WORKSPACE_METADATA_FILE_NAME}`
+    const teamPattern = `${this.WORKSPACES_FOLDER_PATH}/${WorkspaceType.Team}/**/${this.WORKSPACE_METADATA_FILE_NAME}`
 
     if (type === WorkspaceType.Personal) {
       patterns.push(personalPattern)
@@ -240,26 +255,30 @@ export default class PmacConfigurationManager {
     return { localWorkspaces: workspaces }
   }
 
-  private workspaceIdConvention(id: string) {
-    return `[id:${id}]`
+  workspaceIdConvention(id: string): string {
+    return `${this.WORKSPACE_ID_PATTERN}${id}`
   }
 
-  getWorkspacePath(workspaceMetadata: PostmanWorkspaceMetadata) {
+  workspaceNameConvention(name: string, id: string): string {
+    return `${name}${this.workspaceIdConvention(id)}`
+  }
+
+  getWorkspacePath(workspaceMetadata: PostmanWorkspaceMetadata): string {
     const { id, name, type } = workspaceMetadata
     const idConvention = this.workspaceIdConvention(id)
-    return `${this.workspacesDir}/${type}/${name} ${idConvention}`
+    return `${this.WORKSPACES_FOLDER_PATH}/${type}/${name}${idConvention}`
   }
 
-  async renameWorkspaceDir(workspaceMetadata: PostmanWorkspaceMetadata) {
+  async renameWorkspaceDir(workspaceMetadata: PostmanWorkspaceMetadata): Promise<void> {
     // const workspacePath = this.getWorkspacePath(workspaceMetadata);
 
     const basePath =
       workspaceMetadata.type === WorkspaceType.Personal ?
-        this.personalWorkspacesDir :
-        this.teamWorkspacesDir
+        this.PERSONAL_WORKSPACES_FOLDER_PATH :
+        this.TEAM_WORKSPACES_FOLDER_PATH
 
     const idPattern = this.workspaceIdConvention(workspaceMetadata.id)
-    const pattern = `${basePath}/* ${idPattern}`
+    const pattern = `${basePath}/*${idPattern}`
 
     const [oldWorkspacePath] = await globPromise(pattern)
 
@@ -273,7 +292,7 @@ export default class PmacConfigurationManager {
     workspaceMetadata: PostmanWorkspaceMetadata,
   ) {
     return `${this.getWorkspacePath(workspaceMetadata)}/${
-      this.workspaceMetadataFileName
+      this.WORKSPACE_METADATA_FILE_NAME
     }`
   }
 
@@ -288,7 +307,7 @@ export default class PmacConfigurationManager {
   }
 
   getWorkspaceByPath(path: string): PostmanWorkspace {
-    const workspacesSplit = path.split(this.workspacesDirName)[1].split('/')
+    const workspacesSplit = path.split(this.WORKSPACES_FOLDER_NAME)[1].split('/')
     const workspaceType = workspacesSplit[1] as WorkspaceType
     const workspaceIdentifier = workspacesSplit[2]
     const [name, id] = workspaceIdentifier
@@ -311,12 +330,10 @@ export default class PmacConfigurationManager {
     return { deletedWorkspace: workspaceMetadata }
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  // eslint-disable-next-line unicorn/no-object-as-default-parameter
-  createWorkspaceDir(workspace: PostmanWorkspace, options = { force: false }) {
+  createWorkspaceDir(workspace: PostmanWorkspace, options: { force?: boolean } = {}): void {
     try {
       if (!this.exists()) {
-        throw this.pmacNotFoundError
+        throw this.PMAC_NOT_FOUND_ERROR
       }
 
       // create root workspaces type dir
@@ -347,33 +364,35 @@ export default class PmacConfigurationManager {
     }
   }
 
-  writeWorkspaceData(workspace: PostmanWorkspace) {
+  writeWorkspaceData(workspace: PostmanWorkspace): void {
     const workspaceJsonPath = this.getWorkspaceMetadataFilePath(workspace)
     this.writeJsonFileSync(workspaceJsonPath, workspace)
   }
 
-  createPmacPersonalWorkspacesDir() {
+  private GIT_IGNORE_PERSONAL_WORKSPACES_PATTERN = 'workspaces/personal'
+
+  createPmacPersonalWorkspacesDir(): void {
     if (!this.exists()) {
-      throw this.pmacNotFoundError
-    } else if (fs.existsSync(this.personalWorkspacesDir)) {
+      throw this.PMAC_NOT_FOUND_ERROR
+    } else if (fs.existsSync(this.PERSONAL_WORKSPACES_FOLDER_PATH)) {
       return
     }
 
-    fs.mkdirSync(this.personalWorkspacesDir)
+    fs.mkdirSync(this.PERSONAL_WORKSPACES_FOLDER_PATH)
 
     // .gitignore
-    const gitIgnorePattern = this.getGitIgnorePattern('workspaces/personal')
+    const gitIgnorePattern = this.getPmacGitIgnorePattern(this.GIT_IGNORE_PERSONAL_WORKSPACES_PATTERN)
     this.appendGitIgnore(gitIgnorePattern)
   }
 
-  createPmacTeamWorkspacesDir() {
+  createPmacTeamWorkspacesDir(): void {
     if (!this.exists()) {
-      throw this.pmacNotFoundError
-    } else if (fs.existsSync(this.teamWorkspacesDir)) {
+      throw this.PMAC_NOT_FOUND_ERROR
+    } else if (fs.existsSync(this.TEAM_WORKSPACES_FOLDER_PATH)) {
       return
     }
 
-    fs.mkdirSync(this.teamWorkspacesDir)
+    fs.mkdirSync(this.TEAM_WORKSPACES_FOLDER_PATH)
   }
 
   // Get Resources
@@ -383,7 +402,7 @@ export default class PmacConfigurationManager {
   ) {
     return this.getWorkspaceResourcesPaths(
       workspaceMetadata,
-      this.collectionsPattern,
+      this.ALL_COLLECTIONS_PATTERN,
     )
   }
 
@@ -391,13 +410,13 @@ export default class PmacConfigurationManager {
     workspaceMetadata: PostmanWorkspaceMetadata,
     resourceType: WorkspaceResource,
     resourceName: string,
-  ) {
+  ): string {
     const workspacePath = this.getWorkspacePath(workspaceMetadata)
-    return `${workspacePath}/${resourceType}s/${resourceName}.${this.postmanResourcePrefix}${resourceType}.json`
+    return `${workspacePath}/${resourceType}s/${resourceName}.${this.POSTMAN_RESOURCE_PREFIX}${resourceType}.json`
   }
 
-  getResourceFileName(resourceType: WorkspaceResource, resourceName: string) {
-    return `${resourceName}.${this.postmanResourcePrefix}${resourceType}.json`
+  getResourceFileName(resourceType: WorkspaceResource, resourceName: string): string {
+    return `${resourceName}.${this.POSTMAN_RESOURCE_PREFIX}${resourceType}.json`
   }
 
   async updateEnvironment(
@@ -405,7 +424,7 @@ export default class PmacConfigurationManager {
     updatedEnvironment: PostmanEnvironment,
     resourceType: WorkspaceResource,
     resourceName: string,
-  ) {
+  ): Promise<void> {
     const envsPaths = await this.getWorkspaceEnvironmentsPaths(
       workspaceMetadata,
     )
@@ -438,7 +457,7 @@ export default class PmacConfigurationManager {
   ) {
     return this.getWorkspaceResourcesPaths(
       workspaceMetadata,
-      this.environmentsPattern,
+      this.ALL_ENVIRONMENT_PATTERN,
     )
   }
 
@@ -472,22 +491,22 @@ export default class PmacConfigurationManager {
     return resources
   }
 
-  async getWorkspaceEnvironments(workspaceMetadata: PostmanWorkspaceMetadata) {
+  async getWorkspaceEnvironments(workspaceMetadata: PostmanWorkspaceMetadata): Promise<{ localEnvironments: PostmanEnvironment[]; }> {
     const localEnvironments =
       await this.getWorkspaceResources<PostmanEnvironment>(
         workspaceMetadata,
-        this.environmentsPattern,
+        this.ALL_ENVIRONMENT_PATTERN,
       )
     return { localEnvironments }
   }
 
   private collectionPatternRegex = new RegExp(
     // \/.*\/collections\/.*\.postman_.*\.json
-    `(${WorkspaceType.Personal}|${WorkspaceType.Team})/.*/${WorkspaceResource.Collection}s/.*.${this.postmanResourcePrefix}.*.json`,
+    `(${WorkspaceType.Personal}|${WorkspaceType.Team})/.*/${WorkspaceResource.Collection}s/.*.${this.POSTMAN_RESOURCE_PREFIX}.*.json`,
   );
 
   private environmentPatternRegex = new RegExp(
-    `(${WorkspaceType.Personal}|${WorkspaceType.Team})/.*/${WorkspaceResource.Environment}s/.*.${this.postmanResourcePrefix}.*.json`,
+    `(${WorkspaceType.Personal}|${WorkspaceType.Team})/.*/${WorkspaceResource.Environment}s/.*.${this.POSTMAN_RESOURCE_PREFIX}.*.json`,
   );
 
   private pmacResourceNotFound = new Error(
@@ -514,21 +533,24 @@ export default class PmacConfigurationManager {
     return paths.map(path => this.getCollectionByPath(path))
   }
 
-  async getWorkspaceCollections(workspaceMetadata: PostmanWorkspaceMetadata) {
+  async getWorkspaceCollections(workspaceMetadata: PostmanWorkspaceMetadata): Promise<{ localCollections: PostmanCollection[]; }> {
     const localCollections =
       await this.getWorkspaceResources<PostmanCollection>(
         workspaceMetadata,
-        this.collectionsPattern,
+        this.ALL_COLLECTIONS_PATTERN,
       )
     return { localCollections }
   }
 
+  public W_RESOURCE_UID_PATTERN = '_uid_'
+  public WORKSPACE_ID_PATTERN = '_id_'
+
   private resourceUidConvention(uid: string) {
-    return `[uid:${uid}]`
+    return `${this.W_RESOURCE_UID_PATTERN}${uid}`
   }
 
   resourceNameConvention(name: string, uid: string): string {
-    return `${name} ${this.resourceUidConvention(uid)}`
+    return `${name}${this.resourceUidConvention(uid)}`
   }
 
   // Write Resources
@@ -540,7 +562,7 @@ export default class PmacConfigurationManager {
     options:PmacOptions = {},
   ) {
     if (!this.exists()) {
-      throw this.pmacNotFoundError
+      throw this.PMAC_NOT_FOUND_ERROR
     }
 
     const workspaceDir = this.getWorkspacePath(workspaceMetadata)
@@ -552,10 +574,10 @@ export default class PmacConfigurationManager {
       resourceUid,
     )
 
-    const path = `${workspaceDir}/${resourceType}s/${resourcePmacName}.${this.postmanResourcePrefix}${resourceType}.json`
+    const path = `${workspaceDir}/${resourceType}s/${resourcePmacName}.${this.POSTMAN_RESOURCE_PREFIX}${resourceType}.json`
 
     if (fs.existsSync(path) && !options.force) {
-      throw this.pmacResourceAlreadyExistsError
+      throw this.PMAC_W_RESOURCE_ALREADY_EXISTS_ERROR
     }
 
     this.writeJsonFileSync(path, resourceData)
@@ -564,11 +586,11 @@ export default class PmacConfigurationManager {
   async getCollection(
     workspaceMetadata: PostmanWorkspaceMetadata,
     uid: string,
-  ) {
+  ): Promise<{ collection: PostmanCollection; }> {
     const workspacePath = this.getWorkspacePath(workspaceMetadata)
 
     const resourcePattern = this.resourceUidConvention(uid)
-    const pattern = `${workspacePath}/${WorkspaceResource.Collection}s/*${resourcePattern}.${this.postmanResourcePrefix}${WorkspaceResource.Collection}.json`
+    const pattern = `${workspacePath}/${WorkspaceResource.Collection}s/*${resourcePattern}.${this.POSTMAN_RESOURCE_PREFIX}${WorkspaceResource.Collection}.json`
 
     const [resourcePath] = await globPromise(pattern)
     return { collection: this.getCollectionByPath(resourcePath) }
@@ -577,11 +599,11 @@ export default class PmacConfigurationManager {
   async getEnvironment(
     workspaceMetadata: PostmanWorkspaceMetadata,
     uid: string,
-  ) {
+  ): Promise<{ environment: PostmanEnvironment; }> {
     const workspacePath = this.getWorkspacePath(workspaceMetadata)
 
     const resourcePattern = this.resourceUidConvention(uid)
-    const pattern = `${workspacePath}/${WorkspaceResource.Environment}s/*${resourcePattern}.${this.postmanResourcePrefix}${WorkspaceResource.Environment}.json`
+    const pattern = `${workspacePath}/${WorkspaceResource.Environment}s/*${resourcePattern}.${this.POSTMAN_RESOURCE_PREFIX}${WorkspaceResource.Environment}.json`
 
     const [resourcePath] = await globPromise(pattern)
     return { environment: this.getEnvironmentByPath(resourcePath) }
@@ -595,7 +617,7 @@ export default class PmacConfigurationManager {
     const workspacePath = this.getWorkspacePath(workspaceMetadata)
 
     const resourcePattern = this.resourceUidConvention(uid)
-    const pattern = `${workspacePath}/${resourceType}s/*${resourcePattern}.${this.postmanResourcePrefix}${resourceType}.json`
+    const pattern = `${workspacePath}/${resourceType}s/*${resourcePattern}.${this.POSTMAN_RESOURCE_PREFIX}${resourceType}.json`
 
     const [resourcePath] = await globPromise(pattern)
 
@@ -607,7 +629,7 @@ export default class PmacConfigurationManager {
   async deleteEnvironmentResource(
     workspaceMetadata: PostmanWorkspaceMetadata,
     environmentUid: string,
-  ) {
+  ): Promise<void> {
     await this.deleteWorkspaceResource(
       workspaceMetadata,
       environmentUid,
@@ -618,7 +640,7 @@ export default class PmacConfigurationManager {
   async deleteCollectionResource(
     workspaceMetadata: PostmanWorkspaceMetadata,
     collectionUid: string,
-  ) {
+  ): Promise<void> {
     await this.deleteWorkspaceResource(
       workspaceMetadata,
       collectionUid,
@@ -631,7 +653,7 @@ export default class PmacConfigurationManager {
     collectionUid: string,
     collection: PostmanCollection,
     options:PmacOptions = {},
-  ) {
+  ): void {
     this.writeWorkspaceResource(
       workspaceMetadata,
       collection,
@@ -645,7 +667,7 @@ export default class PmacConfigurationManager {
     workspaceMetadata: PostmanWorkspaceMetadata,
     environmentUid: string,
     environment: PostmanEnvironment,
-  ) {
+  ): void {
     this.writeWorkspaceResource(
       workspaceMetadata,
       environment,
@@ -658,7 +680,7 @@ export default class PmacConfigurationManager {
     workspaceMetadata: PostmanWorkspaceMetadata,
     monitorUid: string,
     monitor: PostmanMonitor,
-  ) {
+  ): void {
     this.writeWorkspaceResource(
       workspaceMetadata,
 
@@ -672,7 +694,7 @@ export default class PmacConfigurationManager {
     workspaceMetadata: PostmanWorkspaceMetadata,
     mockUid: string,
     mock: PostmanMock,
-  ) {
+  ): void {
     this.writeWorkspaceResource(
       workspaceMetadata,
       mock,

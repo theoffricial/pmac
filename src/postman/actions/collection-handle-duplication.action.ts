@@ -2,7 +2,7 @@ import { Inquirer } from 'inquirer'
 import { CollectionChooseAction, CollectionPushAction } from '.'
 import { PostmanAPI } from '../api'
 import {
-  PostmanWorkspace,
+  PostmanWorkspace, WorkspaceResource,
 } from '../api/types/workspace.types'
 import { PmacConfigurationManager } from '../../file-system'
 import { IPmacAction } from './action.interface'
@@ -27,7 +27,7 @@ export class CollectionHandleDuplicationAction implements IPmacAction<boolean | 
   }> {
     const matches = await this.config.getWorkspaceResourcesPaths(
       this.workspace,
-      `collections/${this.collectionName} [*`,
+      this.config.allResourcesByNamePattern(WorkspaceResource.Collection, this.collectionName),
       { nocase: true },
     )
 

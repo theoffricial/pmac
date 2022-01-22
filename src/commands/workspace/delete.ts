@@ -55,7 +55,7 @@ export default class WorkspaceDelete extends Command {
     }
 
     this.log(
-      `Environment ${chosenWorkspace.name} [id: ${deleted.id}] deleted from remote and repository successfully.`,
+      `Environment ${chosenWorkspace.name} deleted from remote and repository successfully.`,
     )
   }
 }
@@ -80,7 +80,8 @@ export async function workspacePushNewCommand(
     postmanApiInstance,
   ).run()
 
+  const pmacName = config.resourceNameConvention(newWorkspace.name, newWorkspace.id)
   console.log(
-    `Workspace ${newWorkspace.name} [id: ${newWorkspace.id}] created for both postman account and repository successfully.`,
+    `Workspace ${pmacName} created for both postman account and repository successfully.`,
   )
 }

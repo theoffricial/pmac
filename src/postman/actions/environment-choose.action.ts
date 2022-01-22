@@ -21,7 +21,7 @@ implements IPmacAction<PostmanEnvironment> {
     // When array is empty do nothing
     const choices = this.environments.map(env => ({
       key: pad(env.name, 30),
-      name: `${pad(env.name, 30)} [${env.id}]`,
+      name: `${pad(env.name, 30)} [id:${env.id}]`,
       value: env,
     }))
 

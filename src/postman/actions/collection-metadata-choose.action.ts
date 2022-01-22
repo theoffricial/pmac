@@ -21,7 +21,7 @@ implements IPmacAction<PostmanCollectionMetadata> {
     // When array is empty do nothing
     const choices = this.collections.map(collection => ({
       key: `${pad(collection.name, 30)}`,
-      name: `${pad(collection.name, 30)} [${collection.id}]`,
+      name: `${pad(collection.name, 30)} [id:${collection.id}]`,
       value: collection,
     }))
 
