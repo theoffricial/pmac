@@ -14,9 +14,9 @@ export default class CollectionCreate extends Command {
   static description = 'Creates a new PM collection out of your service OpenApi V3 (swagger) specification.'
 
   static examples = [
-    `$pmac collection create --open-api ./path/to/your/open-api-v3-spec.yml
+    `$ pmac collection create --open-api ./path/to/your/open-api-v3-spec.yml
 `,
-    `$pmac collection create -o ./path/to/your/open-api-v3-spec.yml
+    `$ pmac collection create -o ./path/to/your/open-api-v3-spec.yml
 `,
   ]
 
