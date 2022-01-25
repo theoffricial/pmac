@@ -1,7 +1,7 @@
 **pmac** - Postman as code
 =================
 
-A CLI tool that enable managing postman workspaces and objects automatically as code, and auto-generated from OpenAPI v3 (swagger).
+A CLI tool for managing your postman as code, while integrates with OpenAPI v3 (swagger) standard to give the power to develop services in a standard and profession way.
 
 pmac CLI
 
@@ -15,7 +15,9 @@ pmac CLI
 * [Usage](#usage)
 * [Commands](#commands)
 <!-- tocstop -->
+
 # Usage
+
 <!-- usage -->
 ```sh-session
 $ npm install -g pmac
@@ -182,6 +184,16 @@ DESCRIPTION
 EXAMPLES
   $pmac collection run
 ```
+
+# Run Options
+
+`pmac` is using `newman` behind-the-scenes, which means that `pmac` is supporting all `newman` features, to research for the full list of options including more detailed examples see [newman](https://github.com/postmanlabs/newman#command-line-options) command line options.
+
+Also `pmac` supports all `newman`'s [`default reports`](https://github.com/postmanlabs/newman#reporters), and the external report [`htmlextra`](https://github.com/DannyDainton/newman-reporter-htmlextra#newman-reporter-htmlextra). `options: ['cli', 'html', 'csv', 'junit', 'htmlextra']`.
+
+## Newman Supported Command Line Options
+
+To check the full options list click (here)[https://github.com/postmanlabs/newman#newman-run-collection-file-source-options]
 
 ## `pmac collection update`
 
