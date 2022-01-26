@@ -26,6 +26,13 @@ export class CollectionPushNewAction implements IPmacAction<PostmanCollection> {
       item: this.collection.item,
       event: this.collection.event,
       variable: this.collection.variable,
+    }).catch(error => {
+      console.log(Object.keys(error))
+      console.log(error.request?.data?.error)
+      console.log(error.response?.data?.error)
+      console.log(error.config?.data?.error)
+      console.log(Object.keys(error))
+      throw error
     })
 
     // Updating workspace data
