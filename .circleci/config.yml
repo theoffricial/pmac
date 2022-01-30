@@ -24,7 +24,7 @@ workflows:
             branches:
               only: main
           requires:
-            - node-latest
+            - node-14
 
   dependabot-automerge:
     triggers:
