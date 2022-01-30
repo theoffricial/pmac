@@ -5,19 +5,35 @@ orbs:
   release-management: salesforce/npm-release-management@4
 
 workflows:
-  version: 2
   test-and-release:
     jobs:
+      - release-management/validate-pr:
+          filters:
+            branches:
+              ignore: main
       - release-management/test-package:
           matrix:
             parameters:
               os:
                 - linux
                 - windows
-              node_version:
-                - latest
-                - lts
-                - maintenance
+          name: node-latest
+          node_version: latest
+      - release-management/test-package:
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
+          name: node-14
+          node_version: node-14
+      - release-management/release-package:
+          filters:
+            branches:
+              only: main
+          requires:
+            - node-latest
+
   dependabot-automerge:
     triggers:
       - schedule:
