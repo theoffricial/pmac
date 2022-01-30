@@ -12,21 +12,13 @@ workflows:
             branches:
               ignore: main
       - release-management/test-package:
-          matrix:
-            parameters:
-              os:
-                - linux
-                - windows
-          name: node-latest
-          node_version: latest
-      - release-management/test-package:
-          matrix:
-            parameters:
-              os:
-                - linux
-                - windows
           name: node-14
           node_version: node-14
+          os: linux
+      - release-management/test-package:
+          name: win-node-14
+          node_version: node-14
+          os: windows
       - release-management/release-package:
           filters:
             branches:
