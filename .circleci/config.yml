@@ -12,19 +12,15 @@ workflows:
             branches:
               ignore: main
       - release-management/test-package:
-          name: node-14
-          node_version: node-14
+          name: node-latest
+          node_version: latest
           os: linux
-      - release-management/test-package:
-          name: win-node-14
-          node_version: node-14
-          os: windows
       - release-management/release-package:
           filters:
             branches:
               only: main
           requires:
-            - node-14
+            - node-latest
 
   dependabot-automerge:
     triggers:
