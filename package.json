@@ -18,7 +18,7 @@
     "inquirer": "^8.2.0",
     "listr": "^0.14.3",
     "newman": "^5.3.0",
-    "newman-reporter-htmlextra": "^1.22.3",
+    "newman-reporter-htmlextra": "^1.22.6",
     "openapi-to-postmanv2": "^2.13.0",
     "pad": "^3.2.0"
   },
