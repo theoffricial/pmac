@@ -29,7 +29,7 @@
     "@types/jest": "^27.4.0",
     "@types/listr": "^0.14.4",
     "@types/mocha": "^9.0.0",
-    "@types/newman": "^5.1.4",
+    "@types/newman": "^5.3.0",
     "@types/node": "^16.9.4",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
