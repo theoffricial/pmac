@@ -5,7 +5,6 @@
 /.nyc_output
 /dist
 /lib
-/package-lock.json
 /tmp
 /yarn.lock
 node_modules
@@ -16,3 +15,4 @@ oclif.manifest.json
 
 /.pmac
 /pmac-newman-reports
+/tsconfig.tsbuildinfo
