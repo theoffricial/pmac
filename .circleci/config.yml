@@ -1,34 +1,61 @@
 ---
 version: 2.1
 
-orbs:
-  release-management: salesforce/npm-release-management@4
+aliases:
+  - &restore-cache
+    restore_cache:
+      key: dependency-cache-{{ checksum "package.json" }}
+  - &install-deps
+    run:
+      name: Install dependencies
+      command: npm ci
+  - &build-packages
+    run:
+      name: Build
+      command: npm run build
+  - &run-unit-tests
+    run:
+      name: Test
+      command: npm run test
+
+jobs:
+  build:
+    working_directory: ~/pmac
+    docker:
+      - image: circleci/node:17
+    steps:
+      - checkout
+      - run:
+          name: Update NPM version
+          command: "sudo npm install -g npm@latest"
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Build
+          command: npm run build
+
+  unit_tests:
+    working_directory: ~/pmac
+    docker:
+      - image: circleci/node:17
+    steps:
+      - checkout
+      - *restore-cache
+      - *install-deps
+      - *build-packages
+      - *run-unit-tests
 
 workflows:
-  test-and-release:
+  build-and-test:
     jobs:
-      - release-management/validate-pr:
-          filters:
-            branches:
-              ignore: main
-      - release-management/test-package:
-          name: node-latest
-          node_version: latest
-          os: linux
-      - release-management/release-package:
-          filters:
-            branches:
-              only: main
+      - build
+      - unit_tests:
           requires:
-            - node-latest
-
-  dependabot-automerge:
-    triggers:
-      - schedule:
-          cron: "0 2,5,8,11 * * *"
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - release-management/dependabot-automerge
+            - build

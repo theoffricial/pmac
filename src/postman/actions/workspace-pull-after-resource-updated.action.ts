@@ -1,6 +1,6 @@
 import { IPmacAction } from './action.interface'
 import { PostmanAPI } from '../api'
-import {PmacConfigurationManager } from '../../file-system'
+import { PmacConfigurationManager } from '../../file-system'
 import { PostmanWorkspace } from '../api/types/workspace.types'
 
 /** Updates workspace after resource update */
