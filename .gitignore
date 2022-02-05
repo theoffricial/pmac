@@ -12,6 +12,7 @@ oclif.manifest.json
 /pmac-newman-reports
 /*.openapi.yml
 /.vscode
+/coverage
 
 /.pmac
 /pmac-newman-reports

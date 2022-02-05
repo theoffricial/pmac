@@ -2,21 +2,16 @@
   "compilerOptions": {
     "composite": true,
     "declaration": true,
-    // "importHelpers": true,
-    // "module": "commonjs",
-    // "target": "es6",
-    "outDir": "dist",
     "module": "commonjs",
+    "outDir": "dist",
     "rootDir": "src",
-    "strict": true,
-    "sourceMap": false,
     "target": "es2019",
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
     "typeRoots": [
       "node_modules/@types",
-      "src/local-types"
+      "src/@types"
     ],
     "paths": {
       "openapi-to-postmanv2": [
