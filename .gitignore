@@ -1,7 +1,5 @@
 *-debug.log
 *-error.
-/.pmac/private.json
-/.pmac/workspaces/personal
 /.nyc_output
 /dist
 /lib
@@ -13,7 +11,9 @@ oclif.manifest.json
 /*.openapi.yml
 /.vscode
 /coverage
-
-/.pmac
 /pmac-newman-reports
-/tsconfig.tsbuildinfo
+/tsconfig*.tsbuildinfo
+
+# .pmac
+/.pmac/private.json
+/.pmac/workspaces/personal
