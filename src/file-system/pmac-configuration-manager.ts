@@ -153,25 +153,33 @@ export default class PmacConfigurationManager {
       return
     }
 
-    const content = fs.readFileSync(this.GIT_IGNORE_FILE_PATH, 'utf8')
+    let content = fs.readFileSync(this.GIT_IGNORE_FILE_PATH, 'utf8')
 
     const GIT_IGNORE_PMAC_COMMENT = `# ${this.PMAC_FOLDER_NAME}`
 
     if (!content.includes(GIT_IGNORE_PMAC_COMMENT)) {
       fs.appendFileSync(this.GIT_IGNORE_FILE_PATH, `\n\n${GIT_IGNORE_PMAC_COMMENT}`)
+      // re-read content with the new comment
+      content = fs.readFileSync(this.GIT_IGNORE_FILE_PATH, 'utf8')
     }
 
-    const appendPosition =
+    // check for if the pattern existing and followed by a line break
+    const patternRegexString = `${patternToAppend}(?=\n)`
+    const patternRegex = new RegExp(patternRegexString)
+
+    if (!patternRegex.test(content)) {
+      const appendPosition =
       content.indexOf(GIT_IGNORE_PMAC_COMMENT) +
       GIT_IGNORE_PMAC_COMMENT.length
 
-    const sub = content.slice(Math.max(0, appendPosition))
+      const textAfterPmacComment = content.slice(Math.max(0, appendPosition))
 
-    const file = fs.openSync(this.GIT_IGNORE_FILE_PATH, 'r+')
-    const bufferedText = Buffer.from(`\n${patternToAppend}` + sub)
+      const file = fs.openSync(this.GIT_IGNORE_FILE_PATH, 'r+')
+      const bufferedText = Buffer.from(`\n${patternToAppend}` + textAfterPmacComment)
 
-    fs.writeSync(file, bufferedText, 0, bufferedText.length, appendPosition)
-    fs.closeSync(file)
+      fs.writeSync(file, bufferedText, 0, bufferedText.length, appendPosition)
+      fs.closeSync(file)
+    }
   }
 
   // User Settings
