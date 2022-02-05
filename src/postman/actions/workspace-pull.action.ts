@@ -13,7 +13,7 @@ export class WorkspacePullAction implements IPmacAction<PostmanWorkspace> {
     private readonly workspace: PostmanWorkspace,
   ) {}
 
-  async run() {
+  async run(): Promise<{ workspace: PostmanWorkspace; }> {
     this.config.createWorkspaceDir(this.workspace, { force: true })
 
     console.log(
@@ -55,36 +55,36 @@ export class WorkspacePullAction implements IPmacAction<PostmanWorkspace> {
     console.log('\nPulling monitors\n')
 
     // Setup monitors
-    const AllMonitors = await this.postmanApi.monitors.getAllMonitors()
-    for (const monitor of this.workspace.monitors || []) {
-      // find each monitor
-      const selectedMonitor = AllMonitors.data.monitors.find(
-        m => m.id === this.workspace.monitors[0].id,
-      )
-      const {
-        data: { monitor },
-      // eslint-disable-next-line no-await-in-loop
-      } = await this.postmanApi.monitors.getMonitor(
-        (selectedMonitor as PostmanMonitor).uid,
-      )
+    // const AllMonitors = await this.postmanApi.monitors.getAllMonitors()
+    // for (const monitor of this.workspace.monitors || []) {
+    //   // find each monitor
+    //   const selectedMonitor = AllMonitors.data.monitors.find(
+    //     m => m.id === this.workspace.monitors[0].id,
+    //   )
+    //   const {
+    //     data: { monitor },
+    //   // eslint-disable-next-line no-await-in-loop
+    //   } = await this.postmanApi.monitors.getMonitor(
+    //     (selectedMonitor as PostmanMonitor).uid,
+    //   )
 
-      this.config.writeMonitorResource(this.workspace, monitor.uid, monitor)
-    }
+    //   this.config.writeMonitorResource(this.workspace, monitor.uid, monitor)
+    // }
 
-    console.log(`\n${this.workspace.mocks?.length || 0} mocks found.\n`)
-    console.log('\nPulling mocks\n')
+    // console.log(`\n${this.workspace.mocks?.length || 0} mocks found.\n`)
+    // console.log('\nPulling mocks\n')
 
     // Setup mocks
-    for (const mockMetadata of this.workspace.mocks || []) {
-      const {
-        data: { mock },
-      // eslint-disable-next-line no-await-in-loop
-      } = await this.postmanApi.mocks.singleMock(mockMetadata.id)
+    // for (const mockMetadata of this.workspace.mocks || []) {
+    //   const {
+    //     data: { mock },
+    //   // eslint-disable-next-line no-await-in-loop
+    //   } = await this.postmanApi.mocks.singleMock(mockMetadata.id)
 
-      this.config.writePmacMock(this.workspace, mock.uid, mock)
-    }
+    //   this.config.writePmacMock(this.workspace, mock.uid, mock)
+    // }
 
-    const res = await Promise.all(promises)
+    await Promise.all(promises)
     return { workspace: this.workspace }
   }
 }

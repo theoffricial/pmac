@@ -50,7 +50,10 @@
     "comma-spacing": "error",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
-      "warn"
+      "warn",
+      {
+        "argsIgnorePattern": "^_"
+      }
     ],
     "max-params": "off"
   }

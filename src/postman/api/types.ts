@@ -27,7 +27,6 @@ export type PostmanEnvironmentMinMetadata = Omit<
   'owner'
 >;
 
-// TODO: complete mocks and monitors
 export interface PostmanMock {
   id: string;
   owner: string;

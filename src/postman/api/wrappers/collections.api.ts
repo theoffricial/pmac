@@ -18,11 +18,7 @@ export class PostmanCollectionsAPI {
     private collectionsAPIUrls: typeof PostmanAPIUrls.collections,
   ) {}
 
-  /**
-   *
-   * @returns
-   * @see https://www.postman.com/postman/workspace/postman-public-workspace/documentation/12959542-c8142d51-e97c-46b6-bd77-52bb66712c9a
-   */
+  // @see https://www.postman.com/postman/workspace/postman-public-workspace/documentation/12959542-c8142d51-e97c-46b6-bd77-52bb66712c9a
   getAllCollectionsMetadata(config?: AxiosRequestConfig<any>): Promise<
    PmacAxiosResponse<{
       collections: PostmanCollectionMetadata[];
@@ -33,7 +29,7 @@ export class PostmanCollectionsAPI {
     }>(this.collectionsAPIUrls.allCollections, config)
   }
 
-  getCollection(uid: string, config?: AxiosRequestConfig<any>) {
+  getCollection(uid: string, config?: AxiosRequestConfig<any>): Promise<PmacAxiosResponse<{collection: PostmanCollection; }, any>> {
     return this.pmacAxiosInstance.get<{
       collection: PostmanCollection;
     }>(this.collectionsAPIUrls.singleCollection(uid), config)
@@ -43,7 +39,7 @@ export class PostmanCollectionsAPI {
     workspaceId: string,
     collection: PostmanCollectionCreate,
     config?: AxiosRequestConfig<any>,
-  ) {
+  ): Promise<PmacAxiosResponse<{ collection: PostmanCollectionMetadata; }, any>> {
     return this.pmacAxiosInstance.post<{
       collection: PostmanCollectionMetadata;
     }>(
@@ -57,7 +53,7 @@ export class PostmanCollectionsAPI {
     collectionUid: string,
     update: Partial<PostmanCollection>,
     config?: AxiosRequestConfig<any>,
-  ) {
+  ): Promise<PmacAxiosResponse<{ collection: PostmanCollectionMetadata; }, any>> {
     return this.pmacAxiosInstance.put<{
       collection: PostmanCollectionMetadata;
     }>(
@@ -70,7 +66,7 @@ export class PostmanCollectionsAPI {
   async deleteCollection(
     collectionUid: string,
     config?: AxiosRequestConfig<any>,
-  ) {
+  ): Promise<PmacAxiosResponse<{ collection: PostmanCollectionMetadata; }, any>> {
     return this.pmacAxiosInstance.delete<{
         collection: PostmanCollectionMetadata;
       }>(this.collectionsAPIUrls.deleteCollection(collectionUid), config)
