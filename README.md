@@ -1,15 +1,44 @@
-**pmac** - Postman as code
-=================
+# pmac
 
-A CLI tool for managing your postman as code, while integrates with OpenAPI v3 (swagger) standard to give the power to develop services in a standard and profession way.
+**pmac** stands for **Postman as code** which is an open-source CLI tool and a framework to manage, execute and use postman entities from your code.
 
-pmac CLI
+Understanding the power of consensus standards, pmac aims to work fully integrated with Open Api for maintaining your collections.
+pmac aims to achieve 3-in-1 - Specification, Validation, Verification.
+
+* Specify your service with OpenAPI (v3)
+* Validate your API schemas out from the specification
+* Verify with postman
+
+Every service and API have to face these 3 fundamentals, but there are not many tools that put all 3 under the same roof.
+
+pmac developed as the "last piece of a puzzle" for solving conflicts teams are facing while working with Postman although all of its great advantages over managing API-level testing in other JS testing frameworks.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/pmac.svg)](https://npmjs.org/package/pmac)
-[![CircleCI](https://circleci.com/gh/oclif/hello-world/tree/main.svg?style=shield)](https://circleci.com/gh/oclif/hello-world/tree/main)
-[![Downloads/week](https://img.shields.io/npm/dw/oclif-hello-world.svg)](https://npmjs.org/package/pmac)
-[![License](https://img.shields.io/npm/l/oclif-hello-world.svg)](https://github.com/unicop/pmac/blob/main/package.json)
+[![CircleCI](https://img.shields.io/circleci/build/github/unicop/pmac/main)](https://circleci.com/gh/pmac/tree/tree/main)
+
+<!-- <a href="https://circleci.com/gh/unicop/pmac" target="_blank"><img src="https://img.shields.io/circleci/build/github/unicop/pmac/main" alt="CircleCI" /></a> -->
+
+[![Downloads/week](https://img.shields.io/npm/dw/pmac.svg)](https://npmjs.org/package/pmac)
+[![License](https://img.shields.io/npm/l/pmac.svg)](https://github.com/unicop/pmac/blob/main/package.json)
+
+## Worth mentioning features
+
+* Save your Postman account "state" saved in your code
+* Enable you to manage and test changes from within the code (like in CI/CD pipelines)
+* Executed easily Postman collections - fully supports all `newman` features
+* Support all basic `newman` reports and the community `htmlextra`.
+* Integrated with Postman API
+* Supports fully CRUD for Postman workspaces, collections, and environments
+* Auto-generated Postman collections out from OpenAPI specification (Works with `openapi-to-postmanv2` under-the-hood)
+* Internal management for your Postman API key for easy but safe experience while using Postman API (Automatically insert the condition to your `.gitignore`)
+* User friendly experience using `oclif`, `inquirer`, and, `listr2`.
+* Enforcing the development of well specify services for validation and auto-generated purposes.
+* By managing Postman entities you and your team enjoy all Postman features out-of-the-box, convenient UI, tests, pre-request-scripts, EVERYTHING.
+
+for managing your postman as code, while integrates with OpenAPI v3 (swagger) standard to give the power to develop services in a standard and profession way.
+
+pmac CLI
 
 <!-- toc -->
 * [Usage](#usage)
