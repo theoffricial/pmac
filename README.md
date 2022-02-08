@@ -30,13 +30,9 @@
 
 ## Description
 
----
-
 pmac stands for "Postman as code", it is a CLI tool and a framework for building efficient and scalable APIs, by specifying your API following the OpenAPI standard that is giving you a set of tools out-of-the-box by itself, including validation based on the specification, it auto-generated your specification to postman collection, and manages the collection and other Postman entities as code in your repository while helping you to push, and pull changes happened in your Postman account. pmac uses modern Javascript, is build with TypeScript, and centralize UX for easy and fun usage.
 
 ## Philosophy
-
----
 
 pmac built with the recognition of the advantage of using standards and widely known existing products for easy migration, and for many different scenarios.
 
@@ -51,8 +47,6 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
 * Verification by auto-generating & managing API tests with postman as code in your repository
 
 ## Features that worth mentioning
-
----
 
 * Integrated with [Postman API](<ref-to-postman-api-lib>), using an API key, you pass to pmac
 * Priortizing user experience using
@@ -82,12 +76,8 @@ for managing your postman as code, while integrates with OpenAPI v3 (swagger) st
 
 ## Getting Started
 
----
-
 * To check out the guide, visit pmac docs (Soon...)
 
 ## License
-
----
 
 pmac is [MIT licensed](./LICENSE)
