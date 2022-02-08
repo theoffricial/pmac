@@ -48,7 +48,7 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
 
 ## Features that worth mentioning
 
-* Integrated with [Postman API](<ref-to-postman-api-lib>), using an API key, you pass to pmac
+* Integrated with [Postman API](https://www.postman.com/), using an API key, you pass to pmac
 * Priortizing user experience using
   * Supports auto-completion and help guides by using [oclif](https://github.com/oclif/oclif) CLI framework
   * Enables user inputs using [inquirer](https://github.com/SBoudrias/Inquirer.js/)
@@ -59,20 +59,18 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
   * Create and Update automatically from your OpenAPI spec yml
   * Delete - both local (repo), and remote (PM account)
   * Execute - run Postman collection fully integrated with [newman](https://github.com/postmanlabs/newman)
-    * support all its feature, including [cli](), html, htmlextra,json,junit reporters
+    * support all its feature, including [cli](https://github.com/postmanlabs/newman#cli-reporter), [html](https://github.com/postmanlabs/newman#html-reporter),[htmlextra](https://github.com/DannyDainton/newman-reporter-htmlextra),[json](https://github.com/postmanlabs/newman#html-reporter),[junit](https://github.com/postmanlabs/newman#html-reporter) reporters
 * Postman Environments
   * Create, Delete, Pull, and Push
 * Postman Workspaces
-  * Create - Create new workspace and push into PM account 
+  * Create - Create new workspace and push into PM account
   * Pull - Pulls a workspace into your repo
   * Delete
   * Fetch - fetch changes from the existing workspaces in repo
   * Pull all - pulls the whole postman account
 * With Collection.Execute it is possible to run pmac in CI/CD pipelines
-* Auto-generated Postman collections out from OpenAPI specification - Works with [openapi-to-postmanv2]() under-the-hood
+* Auto-generated Postman collections out from OpenAPI specification - Works with [openapi-to-postmanv2](https://github.com/postmanlabs/openapi-to-postman) under-the-hood
 * By managing Postman entities you get all Postman features out-of-the-box, convenient UI, tests, pre-request-scripts, EVERYTHING.
-
-for managing your postman as code, while integrates with OpenAPI v3 (swagger) standard to give the power to develop services in a standard and profession way.
 
 ## Getting Started
 
