@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="./pmac-logo.png" width="120" alt="Nest Logo" /></a>
+  <a href="https://github.com/unicop/pmac/" target="blank"><img src="./images/pmac-logo.png" width="120" alt="pmac Logo" /></a>
 </p>
 <p align="center">A CLI tool to manage <a href="https://www.postman.com/" target="_blank">Postman</a> as code, together with <a href="https://www.openapis.org/">OpenAPI</a> for building well defined APIs that easy to well-specify, validate, and verify with API tests from your repository for scalable applications.</p>
 
@@ -19,12 +19,12 @@
   <a href="https://github.com/unicop/pmac/blob/main/LICENSE" target="_blank">
     <img src="https://img.shields.io/npm/l/pmac.svg" alt="License" />
   </a>
-
+  <br/>
   <a href="https://github.com/unicop/pmac" target="_blank">
     <img src="https://forthebadge.com/images/badges/built-with-love.svg" alt="BuiltWithLove" />
   </a>
   <a href="https://blog.postman.com/making-the-postman-logo/" target="_blank">
-    <img src="./inspired-by-postman.svg" alt="InspiredByPostman" />
+    <img src="./images/inspired-by-postman.svg" alt="InspiredByPostman" />
   </a>
  </p>
 
