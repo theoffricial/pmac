@@ -28,3 +28,8 @@ eslint*
 # package management
 package-lock.json
 yarn.lock
+
+# images
+/images
+
+README.md
