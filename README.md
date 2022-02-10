@@ -46,7 +46,7 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
 * Validation by using the specification
 * Verification by auto-generating & managing API tests with postman as code in your repository
 
-## Features that worth mentioning
+## Features
 
 * Integrated with [Postman API](https://www.postman.com/), using an API key, you pass to pmac
 * Priortizing user experience using
@@ -60,7 +60,7 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
   * Delete - both local (repo), and remote (PM account)
   * Execute - run Postman collection fully integrated with [newman](https://github.com/postmanlabs/newman)
     * support all its feature, including [cli](https://github.com/postmanlabs/newman#cli-reporter), [html](https://github.com/postmanlabs/newman#html-reporter),[htmlextra](https://github.com/DannyDainton/newman-reporter-htmlextra),[json](https://github.com/postmanlabs/newman#html-reporter),[junit](https://github.com/postmanlabs/newman#html-reporter) reporters
-* Postman Environments
+* Postman Environments Commands
   * Create, Delete, Pull, and Push
 * Postman Workspaces
   * Create - Create new workspace and push into PM account
@@ -74,7 +74,8 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
 
 ## Getting Started
 
-* To check out the guide, visit pmac docs (Soon...)
+* To check out the [commands](./COMMANDS.md), click [here](./COMMANDS.md)
+* pmac official docs (Soon...)
 
 ## License
 
