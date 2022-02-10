@@ -30,11 +30,11 @@
 
 ## Description
 
-pmac stands for "Postman as code", it is a CLI tool and a framework for building efficient and scalable APIs, by specifying your API following the OpenAPI standard that is giving you a set of tools out-of-the-box by itself, including validation based on the specification, it auto-generated your specification to postman collection, and manages the collection and other Postman entities as code in your repository while helping you to push, and pull changes happened in your Postman account. pmac uses modern Javascript, is build with TypeScript, and centralize UX for easy and fun usage.
+pmac stands for "Postman as code", it is a CLI tool and a framework for building efficient and scalable APIs, by specifying your API following the OpenAPI standard that is giving you a set of tools out-of-the-box by itself, including validation based on the specification. Then, after having your specification pmac auto-generated your specification to postman collection, and manages the collection and other Postman entities as code in your repository while helping you to push changes from repository to Postman account, pull changes into the repository, and gives you the ability to manage Postman's entities automatically. pmac uses modern Javascript, is build with TypeScript, and centralize UX for easy and convenient usage.
 
 ## Philosophy
 
-pmac built with the recognition of the advantage of using standards and widely known existing products for easy migration, and for many different scenarios.
+pmac built with the recognition of the advantage of using standards and widely known existing products to fit for many different use-cases scenarios, and also to be easy to migrate to.
 
 In other words, not aiming for inventing the wheel, but for connecting the dots.
 
@@ -74,6 +74,7 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
 
 ## Getting Started
 
+* A good start will be to have a basic openapi specification for your API
 * To check out the [commands](./COMMANDS.md), click [here](./COMMANDS.md)
 * pmac official docs (Soon...)
 
