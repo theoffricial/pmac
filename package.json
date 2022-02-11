@@ -96,5 +96,8 @@
     "topicSeparator": " ",
     "topics": {}
   },
-  "repository": "https://github.com/unicop/pmac"
+  "repository": "https://github.com/unicop/pmac",
+  "lint-staged": {
+    "*.ts": "eslint --cache --fix"
+  }
 }
