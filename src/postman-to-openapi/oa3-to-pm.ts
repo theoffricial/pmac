@@ -1,9 +1,11 @@
-const converter = require('openapi-to-postmanv2')
+import converter, { type OpenApiToPostmanv2Input } from 'openapi-to-postmanv2'
+
+// const converter = require('openapi-to-postmanv2')
 import { PostmanCollection } from '../postman/api/types/collection.types'
 // import { getNewCollectionItemsFromOpenAPI } from "./lib/update-collection/update-collection";
-
+converter
 export async function convertOA3toPMPromise(
-  input: any, // converter.OA3ToPMInputOptions,
+  input: OpenApiToPostmanv2Input, // converter.OA3ToPMInputOptions,
   options?: any, // converter.OA3ToPMOptions
 ): Promise<PostmanCollection> {
   return new Promise((resolve, reject) => {

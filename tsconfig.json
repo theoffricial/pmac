@@ -13,13 +13,8 @@
       "node_modules/@types",
       "src/@types"
     ],
-    "paths": {
-      "openapi-to-postmanv2": [
-        "./src/@types/openapi-to-postmanv2"
-      ]
-    },
   },
   "include": [
-    "src/**/*"
+    "src"
   ]
 }
