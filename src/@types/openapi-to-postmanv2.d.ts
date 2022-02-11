@@ -1,15 +1,14 @@
 declare module 'openapi-to-postmanv2' {
-    export type convert = (...args: any[]) => any;
-    export type OA3ToPMInputOptions =
-      | {
-          type: 'file';
-          data: string;
-        }
-      | {
-          type: 'json';
-          data: any;
-        };
+
+    function convert(input: OpenApiToPostmanv2Input, options?: any, cb: (...args: any[]) => any): any;
+
+    // TODO: Set openapi-to-postmanv2 types lib
+    export type OpenApiToPostmanv2Input = {
+            type: 'file';
+            data: string;
+          }
+        | {
+            type: 'json';
+            data: any;
+          };
   }
-
-  export = 'openapi-to-postmanv2';
-

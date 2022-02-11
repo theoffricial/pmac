@@ -98,6 +98,6 @@
   },
   "repository": "https://github.com/unicop/pmac",
   "lint-staged": {
-    "*.ts": "eslint --cache --fix"
+    "*.ts": "eslint"
   }
 }
