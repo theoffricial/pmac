@@ -3,7 +3,7 @@ import { Command } from '@oclif/core'
 import { PmacConfigurationManager } from '../../file-system'
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
-import { CollectionChooseAction, CollectionFetchAllAction, CollectionMetadataChooseAction, CollectionPullAction, CollectionPushAction, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
+import { CollectionChooseAction, CollectionPushAction, WorkspaceChooseAction } from '../../postman/actions'
 import { CollectionGetMetadataAction } from '../../postman/actions/collection-get-metadata.action'
 
 export default class CollectionPush extends Command {
@@ -15,6 +15,7 @@ export default class CollectionPush extends Command {
   ]
 
   static flags = {
+    // eslint-disable-next-line no-warning-comments
     // TODO: Make collection flag work.
     // collection: Flags.string({
     //   char: 'c',
@@ -25,7 +26,7 @@ export default class CollectionPush extends Command {
   }
 
   async run(): Promise<void> {
-    const { flags } = await this.parse(CollectionPush)
+    await this.parse(CollectionPush)
 
     const config = new PmacConfigurationManager()
     const { localWorkspaces } = await config.getWorkspaces()
@@ -58,7 +59,7 @@ export default class CollectionPush extends Command {
       this.error('Collection not found', { exit: 1, message: 'Chosen collection has an issue.', code: 'invalid choose' })
     }
 
-    const { collection: result } = await new CollectionPushAction(
+    await new CollectionPushAction(
       config,
       postmanApiInstance,
       chosenWorkspace,

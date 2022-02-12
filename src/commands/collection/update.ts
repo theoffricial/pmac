@@ -4,7 +4,7 @@ import { PmacConfigurationManager } from '../../file-system'
 
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
-import { CollectionChooseAction, CollectionGetAllLocalAction, CollectionPushAction, CollectionPushNewAction, CollectionUpdateFromOA3Action, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
+import { CollectionChooseAction, CollectionGetAllLocalAction, CollectionPushAction, CollectionUpdateFromOA3Action, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
 import { CollectionGetMetadataAction } from '../../postman/actions/collection-get-metadata.action'
 
 export default class CollectionUpdate extends Command {
@@ -26,6 +26,7 @@ Without overwrite defined PM events for the existing items (pre-request scripts,
       required: true,
       name: 'openApi',
     }),
+    // eslint-disable-next-line no-warning-comments
     // TODO: make overwrite work
     // 'overwrite-events': Flags.boolean({
     //   description: 'Overwrites the existing PM events on the existing items before update, This will give you an updated collection without any defined PM events.',

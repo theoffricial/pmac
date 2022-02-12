@@ -1,4 +1,4 @@
-import { Command, Flags } from '@oclif/core'
+import { Command } from '@oclif/core'
 import { PmacConfigurationManager } from '../../file-system'
 
 export default class ApiKeyDelete extends Command {
@@ -16,7 +16,7 @@ export default class ApiKeyDelete extends Command {
   // static args = [{ name: 'apiKey', description: 'Postman api key', required: true }]
 
   async run(): Promise<void> {
-    const { args, flags } = await this.parse(ApiKeyDelete)
+    const { args } = await this.parse(ApiKeyDelete)
 
     const config = new PmacConfigurationManager()
 

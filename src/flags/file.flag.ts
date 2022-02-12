@@ -21,18 +21,18 @@ export const file = flags.build({
   //   char: 'e',
   completion: FileCompletion,
   description: 'file git remote of app to use',
-  default: ({ options, flags }) => {
-    return ''
-    // const envApp = process.env.HEROKU_APP
-    // if (envApp) return envApp
-    // const gitRemotes = getGitRemotes(flags.remote || configRemote())
-    // if (gitRemotes.length === 1) return gitRemotes[0].app
-    // if (flags.remote && gitRemotes.length === 0) {
-    //   error(`remote ${flags.remote} not found in git remotes`)
-    // }
+  // default: ({ options, flags }) => {
+  //   return ''
+  //   // const envApp = process.env.HEROKU_APP
+  //   // if (envApp) return envApp
+  //   // const gitRemotes = getGitRemotes(flags.remote || configRemote())
+  //   // if (gitRemotes.length === 1) return gitRemotes[0].app
+  //   // if (flags.remote && gitRemotes.length === 0) {
+  //   //   error(`remote ${flags.remote} not found in git remotes`)
+  //   // }
 
-    // if (gitRemotes.length > 1 && options.required) {
-    //   throw new MultipleRemotesError(gitRemotes)
-    // }
-  },
+  //   // if (gitRemotes.length > 1 && options.required) {
+  //   //   throw new MultipleRemotesError(gitRemotes)
+  //   // }
+  // },
 })

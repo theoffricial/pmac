@@ -14,6 +14,7 @@ export default class CollectionPull extends Command {
   ]
 
   static flags = {
+    // eslint-disable-next-line no-warning-comments
     // TODO: Make collection flag work.
     // collection: Flags.string({
     //   char: 'c',
@@ -24,7 +25,7 @@ export default class CollectionPull extends Command {
   }
 
   async run(): Promise<void> {
-    const { flags } = await this.parse(CollectionPull)
+    await this.parse(CollectionPull)
 
     const config = new PmacConfigurationManager()
 
@@ -47,7 +48,7 @@ export default class CollectionPull extends Command {
       collectionsMetadata,
     ).run()
 
-    const { collection } = await new CollectionPullAction(
+    await new CollectionPullAction(
       config,
       postmanApiInstance,
       chosenWorkspace,

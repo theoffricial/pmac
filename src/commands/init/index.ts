@@ -25,13 +25,12 @@ export default class PmacInit extends Command {
   }
 
   async run(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { flags } = await this.parse(PmacInit)
     const config = new PmacConfigurationManager()
     const tasks = new Listr([
       {
         title: 'Validating api key',
-        task: (ctx, task) => {
+        task: (_ctx, _task) => {
           const apiKey = flags['api-key']
           const validApiKey = pmakValidator(apiKey)
 
@@ -42,7 +41,7 @@ export default class PmacInit extends Command {
       },
       {
         title: 'Initial .pmac environment',
-        task: (ctx, task) => {
+        task: (ctx, _task) => {
           config.init({ force: true })
           ctx.apiKey = flags['api-key']
           // this.log('.pmac environment initial successfully!')

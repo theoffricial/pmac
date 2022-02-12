@@ -70,7 +70,7 @@ export class CollectionHandleDuplicationAction implements IPmacAction<boolean | 
       this.openApiSpecPath,
     ).run()
 
-    const { collection } = await new CollectionPushAction(
+    await new CollectionPushAction(
       this.config,
       this.postmanApi,
       this.workspace,

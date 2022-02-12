@@ -12,12 +12,11 @@ export default class PullWholeAccount extends Command {
 `,
   ]
 
-  // TODO: add api-key arg
   static args = [];
   static flags = {}
 
   async run(): Promise<void> {
-    const { flags } = await this.parse(PullWholeAccount)
+    await this.parse(PullWholeAccount)
 
     const config = new PmacConfigurationManager()
 

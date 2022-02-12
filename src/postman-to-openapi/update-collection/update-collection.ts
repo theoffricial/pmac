@@ -130,16 +130,16 @@ function setItemRequestPath(item: PostmanCollectionItem) {
 // Converts path params from OA3 e.g. :petId to PM variables e.g. {{petId}}
 function convertPathParamsToPMVariables(requestItem: PostmanCollectionItem) {
   if (isPMItemHasRequestPath(requestItem)) {
-    return (
-      requestItem.request?.url.path.map((pathFragment: string) => {
-        return pathFragment.startsWith(':') ? replaceOA3PathParameterToPMVariableFormat(pathFragment) : pathFragment
-      }) || []
-    )
+    const path = requestItem.request?.url.path || []
+    const fixedPath = path.map((pathFragment: string) => {
+      return pathFragment.startsWith(':') ? replaceOA3PathParameterToPMVariableFormat(pathFragment) : pathFragment
+    })
+    return fixedPath
   }
 
   return requestItem.request?.url.path || []
 }
 
 function replaceOA3PathParameterToPMVariableFormat(pathParameter: string) {
-  return [...pathParameter.replace(':', '{{'), '}}']
+  return `${pathParameter.replace(':', '{{')}}}`
 }

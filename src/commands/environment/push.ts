@@ -3,7 +3,7 @@ import { Command } from '@oclif/core'
 import { PmacConfigurationManager } from '../../file-system'
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
-import { EnvironmentChooseAction, EnvironmentGetAllLocalAction, EnvironmentGetMetadataAction, EnvironmentMetadataChooseAction, EnvironmentPushAction, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
+import { EnvironmentChooseAction, EnvironmentGetAllLocalAction, EnvironmentGetMetadataAction, EnvironmentPushAction, WorkspaceChooseAction } from '../../postman/actions'
 
 export default class EnvironmentPush extends Command {
   static description = 'Pushes (Fetches) environment updates to your PM account (remote) from your .pmac (repository).'
@@ -14,6 +14,7 @@ export default class EnvironmentPush extends Command {
   ]
 
   static flags = {
+    // eslint-disable-next-line no-warning-comments
     // TODO: Make environment flag work.
     // environment: Flags.string({
     //   char: 'c',
@@ -24,7 +25,7 @@ export default class EnvironmentPush extends Command {
   }
 
   async run(): Promise<void> {
-    const { flags } = await this.parse(EnvironmentPush)
+    await this.parse(EnvironmentPush)
 
     const config = new PmacConfigurationManager()
     const { localWorkspaces } = await config.getWorkspaces()
@@ -54,7 +55,7 @@ export default class EnvironmentPush extends Command {
       this.error('Environment not found', { exit: 1 })
     }
 
-    const { environment } = await new EnvironmentPushAction(
+    await new EnvironmentPushAction(
       config,
       postmanApiInstance,
       chosenWorkspace,

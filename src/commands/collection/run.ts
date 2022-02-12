@@ -434,7 +434,6 @@ export default class CollectionRun extends Command {
   // static args = [{ name: 'apiKey', description: 'Postman api key', required: false }]
 
   async run(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { flags } = await this.parse(CollectionRun)
     const config = new PmacConfigurationManager()
 

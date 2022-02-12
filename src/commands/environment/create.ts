@@ -1,4 +1,4 @@
-import { Command, Flags } from '@oclif/core'
+import { Command } from '@oclif/core'
 
 import { PmacConfigurationManager } from '../../file-system'
 
@@ -19,7 +19,7 @@ export default class EnvironmentCreate extends Command {
   static flags = {}
 
   async run(): Promise<void> {
-    const { flags } = await this.parse(EnvironmentCreate)
+    await this.parse(EnvironmentCreate)
 
     const config = new PmacConfigurationManager()
 
