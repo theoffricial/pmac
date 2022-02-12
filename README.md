@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/postman-as-code/pmac/" target="blank"><img src="./images/pmac-logo.png" width="120" alt="pmac Logo" /></a>
+  <a href="https://github.com/postman-as-code/pmac/" target="blank"><img src="./images/pmac-logo.svg" width="120" alt="pmac Logo" /></a>
 </p>
 <p align="center">A CLI tool to manage <a href="https://www.postman.com/" target="_blank">Postman</a> as code, together with <a href="https://www.openapis.org/">OpenAPI</a> for building well defined APIs that easy to well-specify, validate, and verify with API tests from your repository for scalable applications.</p>
 
@@ -10,7 +10,7 @@
   <a href="https://npmjs.org/package/pmac" target="_blank">
     <img src="https://img.shields.io/npm/v/pmac.svg" alt="NPM Version" />
   </a>
-  <a href="https://circleci.com/gh/pmac/tree/tree/main" target="_blank">
+  <a href="https://app.circleci.com/pipelines/github/postman-as-code/pmac?branch=main" target="_blank">
     <img src="https://img.shields.io/circleci/build/github/postman-as-code/pmac/main" alt="CircleCI" />
   </a>
   <a href="https://npmjs.org/package/pmac" target="_blank">
