@@ -1,4 +1,5 @@
-import converter, { type OpenApiToPostmanv2Input } from 'openapi-to-postmanv2'
+import type { OpenApiToPostmanv2Input } from 'openapi-to-postmanv2'
+import converter from 'openapi-to-postmanv2'
 
 // const converter = require('openapi-to-postmanv2')
 import { PostmanCollection } from '../postman/api/types/collection.types'

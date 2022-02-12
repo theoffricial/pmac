@@ -2,7 +2,7 @@ import { Command, Flags } from '@oclif/core'
 
 import inquirer from 'inquirer'
 
-import { WorkspaceFetchAction, WorkspaceFetchAllAction, WorkspaceMetadataChooseAction, WorkspacePullAction, WorkspacePushNewAction } from '../../postman/actions'
+import { WorkspaceFetchAction, WorkspaceFetchAllAction, WorkspaceMetadataChooseAction, WorkspacePullAction } from '../../postman/actions'
 import { postmanApiInstance } from '../../postman/api'
 import { PmacConfigurationManager } from '../../file-system'
 
@@ -22,14 +22,6 @@ export default class WorkspacePull extends Command {
   async run(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { flags } = await this.parse(WorkspacePull)
-
-    // const headers = {}
-    // TODO: use flags for different behavior
-    // if (flags.) {
-    //   headers = {
-    //     'X-Api-Key': commandAndOptions.apiKey,
-    //   }
-    // }
 
     const { workspacesMetadata } = await new WorkspaceFetchAllAction(
       postmanApiInstance,

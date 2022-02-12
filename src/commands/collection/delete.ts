@@ -47,17 +47,17 @@ export default class CollectionDelete extends Command {
 
     const pmacCollectionName = config.resourceNameConvention(chosenCollection.name, chosenCollection.uid)
     if (flags['local-only']) {
-      const { deletedCollection } = await new CollectionDeleteLocalAction(config, chosenWorkspace, chosenCollection.uid).run()
+      await new CollectionDeleteLocalAction(config, chosenWorkspace, chosenCollection.uid).run()
       this.log(
         `Collection ${pmacCollectionName} deleted from .pmac (repository).`,
       )
     } else if (flags['remote-only']) {
-      const { deletedCollection } = await new CollectionDeleteRemoteAction(config, postmanApiInstance, chosenWorkspace, chosenCollection.uid).run()
+      await new CollectionDeleteRemoteAction(config, postmanApiInstance, chosenWorkspace, chosenCollection.uid).run()
       this.log(
         `Collection ${pmacCollectionName} deleted from your PM account (remote).`,
       )
     } else {
-      const { deletedCollection } = await new CollectionDeleteAction(
+      await new CollectionDeleteAction(
         config,
         postmanApiInstance,
         chosenWorkspace,

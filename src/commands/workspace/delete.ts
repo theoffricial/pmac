@@ -23,7 +23,6 @@ export default class WorkspaceDelete extends Command {
   }
 
   async run(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { flags } = await this.parse(WorkspaceDelete)
 
     const config = new PmacConfigurationManager()
@@ -55,7 +54,7 @@ export default class WorkspaceDelete extends Command {
     }
 
     this.log(
-      `Environment ${chosenWorkspace.name} deleted from remote and repository successfully.`,
+      `Workspace ${chosenWorkspace.name} id:${deleted} deleted from remote and repository successfully.`,
     )
   }
 }

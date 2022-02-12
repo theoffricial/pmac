@@ -9,6 +9,8 @@ import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
 import { CollectionChooseAction, CollectionGetMetadataAction, CollectionPushAction, CollectionPushNewAction, CollectionUpdateFromOA3Action, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
 import { CollectionHandleDuplicationAction } from '../../postman/actions/collection-handle-duplication.action'
+import { workspacePathValidator } from '../../validators'
+import { PostmanWorkspace } from '../../postman/api/types/workspace.types'
 
 export default class CollectionCreate extends Command {
   static description = 'Creates a new PM collection out of your service OpenApi V3 (swagger) specification.'
@@ -28,6 +30,12 @@ export default class CollectionCreate extends Command {
       required: true,
       name: 'open-api',
     }),
+    workspace: Flags.string({
+      char: 'w',
+      name: 'workspace',
+      required: false,
+      description: 'Path to the required workspace',
+    }),
   }
 
   async run(): Promise<void> {
@@ -43,44 +51,54 @@ export default class CollectionCreate extends Command {
       {},
     )
 
-    const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
-      config,
-    ).run()
-
-    const { chosenWorkspace } = await new WorkspaceChooseAction(
-      inquirer,
-      localWorkspaces,
-    ).run()
-
-    const { userDecidedToUpdateInstead, duplicateCollections } = await new CollectionHandleDuplicationAction(
-      flags['open-api'],
-      inquirer,
-      postmanApiInstance,
-      config,
-      chosenWorkspace,
-      collectionFromOpenApi.info.name,
-    ).run()
-
-    if (userDecidedToUpdateInstead) {
-      this.log('Collection creation terminated, Updates existing instead.')
-
-      // Duplicate to collection update, maybe split
-      const { chosenCollection } = await new CollectionChooseAction(inquirer, duplicateCollections).run()
-
-      const { updatedCollection } = await new CollectionUpdateFromOA3Action(chosenWorkspace, chosenCollection, flags['open-api']).run()
-      const { collectionMetadata } = await new CollectionGetMetadataAction(chosenWorkspace, chosenCollection).run()
-
-      await new CollectionPushAction(
+    let workspace: PostmanWorkspace
+    if (flags.workspace && workspacePathValidator(flags.workspace)) {
+      const selectedWorkspace = config.getWorkspaceByPath(flags.workspace)
+      workspace = selectedWorkspace
+    } else {
+      const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
         config,
-        postmanApiInstance,
-        chosenWorkspace,
-        collectionMetadata.uid,
-        updatedCollection,
       ).run()
 
-      this.log(`Collection ${config.resourceNameConvention(collectionMetadata.name, collectionMetadata.uid)} updated.`)
-      this.exit()
-      return
+      const { chosenWorkspace } = await new WorkspaceChooseAction(
+        inquirer,
+        localWorkspaces,
+      ).run()
+
+      workspace = chosenWorkspace
+    }
+
+    if (!flags.workspace) {
+      const { userDecidedToUpdateInstead, duplicateCollections } = await new CollectionHandleDuplicationAction(
+        flags['open-api'],
+        inquirer,
+        postmanApiInstance,
+        config,
+        workspace,
+        collectionFromOpenApi.info.name,
+      ).run()
+
+      if (userDecidedToUpdateInstead) {
+        this.log('Collection creation terminated, Updates existing instead.')
+
+        // Duplicate to collection update, maybe split
+        const { chosenCollection } = await new CollectionChooseAction(inquirer, duplicateCollections).run()
+
+        const { updatedCollection } = await new CollectionUpdateFromOA3Action(workspace, chosenCollection, flags['open-api']).run()
+        const { collectionMetadata } = await new CollectionGetMetadataAction(workspace, chosenCollection).run()
+
+        await new CollectionPushAction(
+          config,
+          postmanApiInstance,
+          workspace,
+          collectionMetadata.uid,
+          updatedCollection,
+        ).run()
+
+        this.log(`Collection ${config.resourceNameConvention(collectionMetadata.name, collectionMetadata.uid)} updated.`)
+        this.exit()
+        return
+      }
     }
 
     // To process
@@ -94,15 +112,19 @@ export default class CollectionCreate extends Command {
       item: finalItem,
     }
 
-    const { collection } = await new CollectionPushNewAction(
-      config,
-      postmanApiInstance,
-      chosenWorkspace,
-      newCollection,
-    ).run()
+    try {
+      const { collection } = await new CollectionPushNewAction(
+        config,
+        postmanApiInstance,
+        workspace,
+        newCollection,
+      ).run()
 
-    this.log(
-      `Collection ${collection?.info?.name} created successfully!`,
-    )
+      this.log(
+        `Collection ${collection?.info?.name} created successfully!`,
+      )
+    } catch (error) {
+      this.error(error as any)
+    }
   }
 }

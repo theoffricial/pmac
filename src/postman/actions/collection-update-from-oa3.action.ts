@@ -15,16 +15,13 @@ implements IPmacAction<PostmanCollection> {
     private readonly openApiSpecificationPath: string,
   ) {}
 
-  async run() {
+  async run(): Promise<{ updatedCollection: PostmanCollection; }> {
     const { collectionMetadata } = await new CollectionGetMetadataAction(
       this.workspace,
       this.collection,
     ).run()
 
-    let collectionUid = ''
-    if (collectionMetadata) {
-      collectionUid = collectionMetadata.uid
-    } else {
+    if (!collectionMetadata) {
       console.error('Collection not found.')
       process.exit(1)
     }

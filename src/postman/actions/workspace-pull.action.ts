@@ -1,5 +1,4 @@
 import { PostmanAPI } from '../api'
-import { PostmanMonitor } from '../api/types'
 import { PostmanWorkspace } from '../api/types/workspace.types'
 import { PmacConfigurationManager } from '../../file-system'
 import { IPmacAction } from './action.interface'

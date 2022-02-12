@@ -14,6 +14,7 @@ export default class EnvironmentPull extends Command {
   ]
 
   static flags = {
+    // eslint-disable-next-line no-warning-comments
     // TODO: Make collection flag work.
     // collection: Flags.string({
     //   char: 'c',
@@ -24,7 +25,7 @@ export default class EnvironmentPull extends Command {
   }
 
   async run(): Promise<void> {
-    const { flags } = await this.parse(EnvironmentPull)
+    await this.parse(EnvironmentPull)
 
     const config = new PmacConfigurationManager()
 
@@ -47,7 +48,7 @@ export default class EnvironmentPull extends Command {
       environmentsMetadata,
     ).run()
 
-    const { environment } = await new EnvironmentPullAction(
+    await new EnvironmentPullAction(
       config,
       postmanApiInstance,
       chosenWorkspace,

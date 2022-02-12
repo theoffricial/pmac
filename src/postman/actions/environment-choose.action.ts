@@ -1,6 +1,6 @@
 import { Inquirer } from 'inquirer'
 import pad from 'pad'
-import { PostmanEnvironment, PostmanEnvironmentMetadata } from '../api/types'
+import { PostmanEnvironment } from '../api/types'
 import { IPmacAction } from './action.interface'
 
 export class EnvironmentChooseAction

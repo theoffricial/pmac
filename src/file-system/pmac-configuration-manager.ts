@@ -12,7 +12,8 @@ import {
   WorkspaceResource,
   WorkspaceType,
 } from '../postman/api/types/workspace.types'
-import { globMultiPromise, globPromise, type GlobPromiseOptions } from './glob-promise'
+import { globMultiPromise, globPromise } from './glob-promise'
+import type { GlobPromiseOptions } from './glob-promise'
 
 interface PmacOptions {
   /** Force to overwrite */
@@ -27,7 +28,7 @@ export default class PmacConfigurationManager {
   PMAC_FOLDER_NAME = `.${this.PMAC_LIB_NAME}`;
   private PMAC_FOLDER_PATH = `${this.REPOSITORY_ROOT_FOLDER_PATH}/${this.PMAC_FOLDER_NAME}`;
   private WORKSPACES_FOLDER_NAME = 'workspaces';
-  private WORKSPACES_FOLDER_PATH = `${this.PMAC_FOLDER_PATH}/${this.WORKSPACES_FOLDER_NAME}`;
+  WORKSPACES_FOLDER_PATH = `${this.PMAC_FOLDER_PATH}/${this.WORKSPACES_FOLDER_NAME}`;
 
   private PRIVATE_CONFIG_FILE_NAME = 'private.json';
   private PRIVATE_CONFIG_FILE_PATH = `${this.PMAC_FOLDER_PATH}/${this.PRIVATE_CONFIG_FILE_NAME}`;
@@ -318,11 +319,7 @@ export default class PmacConfigurationManager {
     const workspacesSplit = path.split(this.WORKSPACES_FOLDER_NAME)[1].split('/')
     const workspaceType = workspacesSplit[1] as WorkspaceType
     const workspaceIdentifier = workspacesSplit[2]
-    const [name, id] = workspaceIdentifier
-    .replace(/[[\]]/g, '')
-    .replace(/id:/g, '')
-    .split(' ')
-    // const workspaceName = workspacesSplit[2]
+    const [name, id] = workspaceIdentifier.split(this.WORKSPACE_ID_PATTERN)
 
     return this.getWorkspace({ name, id, type: workspaceType })
   }
@@ -586,6 +583,10 @@ export default class PmacConfigurationManager {
 
     if (fs.existsSync(path) && !options.force) {
       throw this.PMAC_W_RESOURCE_ALREADY_EXISTS_ERROR
+    }
+
+    (resourceData as any).metadata = {
+      lastWriteTime: new Date().toISOString(),
     }
 
     this.writeJsonFileSync(path, resourceData)

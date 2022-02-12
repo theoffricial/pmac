@@ -13,7 +13,7 @@ export default class WorkspaceFetchPulled extends Command {
   ]
 
   async run(): Promise<void> {
-    const { flags } = await this.parse(WorkspaceFetchPulled)
+    await this.parse(WorkspaceFetchPulled)
 
     const config = new PmacConfigurationManager()
     const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
