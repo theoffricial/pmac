@@ -1,26 +1,26 @@
 <p align="center">
-  <a href="https://github.com/unicop/pmac/" target="blank"><img src="./images/pmac-logo.png" width="120" alt="pmac Logo" /></a>
+  <a href="https://github.com/postman-as-code/pmac/" target="blank"><img src="./images/pmac-logo.png" width="120" alt="pmac Logo" /></a>
 </p>
 <p align="center">A CLI tool to manage <a href="https://www.postman.com/" target="_blank">Postman</a> as code, together with <a href="https://www.openapis.org/">OpenAPI</a> for building well defined APIs that easy to well-specify, validate, and verify with API tests from your repository for scalable applications.</p>
 
  <p align="center">
-  <a href="https://github.com/unicop/pmac" target="_blank">
-    <img src="https://img.shields.io/github/last-commit/unicop/pmac" alt="Last Commit" />
+  <a href="https://github.com/postman-as-code/pmac" target="_blank">
+    <img src="https://img.shields.io/github/last-commit/postman-as-code/pmac" alt="Last Commit" />
   </a>
   <a href="https://npmjs.org/package/pmac" target="_blank">
     <img src="https://img.shields.io/npm/v/pmac.svg" alt="NPM Version" />
   </a>
   <a href="https://circleci.com/gh/pmac/tree/tree/main" target="_blank">
-    <img src="https://img.shields.io/circleci/build/github/unicop/pmac/main" alt="CircleCI" />
+    <img src="https://img.shields.io/circleci/build/github/postman-as-code/pmac/main" alt="CircleCI" />
   </a>
   <a href="https://npmjs.org/package/pmac" target="_blank">
     <img src="https://img.shields.io/npm/dm/pmac.svg" alt="Downloads/Month" />
   </a>
-  <a href="https://github.com/unicop/pmac/blob/main/LICENSE" target="_blank">
+  <a href="https://github.com/postman-as-code/pmac/blob/main/LICENSE" target="_blank">
     <img src="https://img.shields.io/npm/l/pmac.svg" alt="License" />
   </a>
   <br/>
-  <a href="https://github.com/unicop/pmac" target="_blank">
+  <a href="https://github.com/postman-as-code/pmac" target="_blank">
     <img src="https://forthebadge.com/images/badges/built-with-love.svg" alt="BuiltWithLove" />
   </a>
   <a href="https://blog.postman.com/making-the-postman-logo/" target="_blank">

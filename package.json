@@ -21,7 +21,7 @@
     "version": "oclif readme --multi && git add README.md",
     "prepare": "husky install"
   },
-  "bugs": "https://github.com/unicop/pmac/issues",
+  "bugs": "https://github.com/postman-as-code/pmac/issues",
   "dependencies": {
     "@oclif/command": "^1.8.16",
     "@oclif/core": "^1",
@@ -76,7 +76,7 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/unicop/pmac",
+  "homepage": "https://github.com/postman-as-code/pmac",
   "keywords": [
     "postman",
     "openapi",
@@ -96,7 +96,7 @@
     "topicSeparator": " ",
     "topics": {}
   },
-  "repository": "https://github.com/unicop/pmac",
+  "repository": "https://github.com/postman-as-code/pmac",
   "lint-staged": {
     "*.ts": "eslint"
   }
