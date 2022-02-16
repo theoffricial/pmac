@@ -75,7 +75,7 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
 ## Getting Started
 
 * A good start will be to have a basic openapi specification for your API
-* To check out the [commands](./COMMANDS.md), click [here](./COMMANDS.md)
+* To check out the [commands](./docs), use `help` in the CLI or click [here](./docs)
 * pmac official docs (Soon...)
 
 ## License

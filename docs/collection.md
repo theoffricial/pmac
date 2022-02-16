@@ -16,10 +16,11 @@ Creates a new PM collection out of your service OpenApi V3 (swagger) specificati
 
 ```
 USAGE
-  $ pmac collection create -o <value>
+  $ pmac collection create -o <value> [-w <value>]
 
 FLAGS
   -o, --open-api=./path/to/your/openapi.yml  (required) Path to your OpenApi V3 (known as swagger) specification
+  -w, --workspace=<value>                    Path to the required workspace
 
 DESCRIPTION
   Creates a new PM collection out of your service OpenApi V3 (swagger) specification.
