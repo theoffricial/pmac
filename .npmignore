@@ -28,8 +28,16 @@ eslint*
 # package management
 package-lock.json
 yarn.lock
-
-# images
-/images
-
-README.md
+images/pmac-logo.png
+docs
+coverage
+.husky
+pmac-newman-reports
+.commitlint.config.js
+CONTRIBUTING.md
+pmac.code-workspace
+*.yml
+tmp
+tsconfig*
+CODE_OF_CONDUCT.md
+test
