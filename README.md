@@ -28,6 +28,11 @@
   </a>
  </p>
 
+## Disclosure
+
+I just published this package, and it can be improved and it will.
+So if you any suggestions or had a bad experience, I would be happy to hear - you can contact by using the [Discord](https://discord.gg/tPD99Z3A) channel, open an issue or contact with me via [LinkedIn](https://www.linkedin.com/in/itsofriperetz/).
+
 ## Description
 
 pmac stands for "Postman as code", it is a CLI tool and a framework for building efficient and scalable APIs, by specifying your API following the OpenAPI standard that is giving you a set of tools out-of-the-box by itself, including validation based on the specification. Then, after having your specification pmac auto-generated your specification to postman collection, and manages the collection and other Postman entities as code in your repository while helping you to push changes from repository to Postman account, pull changes into the repository, and gives you the ability to manage Postman's entities automatically. pmac uses modern Javascript, is build with TypeScript, and centralize UX for easy and convenient usage.

@@ -1,7 +1,7 @@
 {
   "name": "pmac",
   "description": "Manages your team's Postman as code.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "unicop",
   "license": "MIT",
   "main": "dist/index.js",

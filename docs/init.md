@@ -27,4 +27,4 @@ EXAMPLES
   $pmac init -k "your-pm-api-key"
 ```
 
-_See code: [dist/src/commands/init/index.ts](https://github.com/postman-as-code/pmac/blob/v0.1.0/dist/src/commands/init/index.ts)_
+_See code: [dist/src/commands/init/index.ts](https://github.com/postman-as-code/pmac/blob/v0.1.1/dist/src/commands/init/index.ts)_
