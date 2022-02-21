@@ -1,6 +1,7 @@
 ---
 version: 2.1
-
+orbs:
+  codecov: codecov/codecov@3.2.2
 aliases:
   - &restore-cache
     restore_cache:
@@ -16,7 +17,7 @@ aliases:
   - &run-unit-tests
     run:
       name: Test
-      command: npm run test
+      command: npm run test -- --coverage
 
 jobs:
   build:
@@ -51,6 +52,7 @@ jobs:
       - *install-deps
       - *build-packages
       - *run-unit-tests
+      - codecov/upload
 
 workflows:
   build-and-test:
