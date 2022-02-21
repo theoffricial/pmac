@@ -19,6 +19,9 @@
   <a href="https://github.com/postman-as-code/pmac/blob/main/LICENSE" target="_blank">
     <img src="https://img.shields.io/npm/l/pmac.svg" alt="License" />
   </a>
+  <a href="https://codecov.io/gh/postman-as-code/pmac">
+    <img src="https://codecov.io/gh/postman-as-code/pmac/branch/main/graph/badge.svg?token=VQATYZJCCN"/>
+  </a>
   <br/>
   <a href="https://github.com/postman-as-code/pmac" target="_blank">
     <img src="https://forthebadge.com/images/badges/built-with-love.svg" alt="BuiltWithLove" />
