@@ -1,10 +1,9 @@
-import { expect, test } from '@oclif/test'
+import World from '../../../src/commands/hello/world'
 
 describe('hello world', () => {
-  test
-  .stdout()
-  .command(['hello:world'])
-  .it('runs hello world cmd', ctx => {
-    expect(ctx.stdout).to.contain('hello world!')
+  it('should say hello world', async () => {
+    const spy = jest.spyOn(process.stdout, 'write')
+    await World.run([])
+    expect(spy).toHaveBeenCalledWith('hello world! (./src/commands/hello/world.ts)\n')
   })
 })
