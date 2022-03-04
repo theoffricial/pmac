@@ -31,7 +31,9 @@ export async function createPMACPrivateConfig(config: PMACPrivateConfig, options
 export async function getPrivateConfig(): Promise<PMACPrivateConfig> {
   const { path } = PRIVATE_DIR.CONFIG_FILE
 
-  return readJsonFile<PMACPrivateConfig>(path)
+  return readJsonFile<PMACPrivateConfig>(path).catch(error => {
+    return {}
+  })
 }
 
 // TODO: Add private user pmac here
