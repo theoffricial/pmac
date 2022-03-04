@@ -484,9 +484,11 @@ export default class CollectionRun extends Command {
         pmacWorkspace,
       ).run()
 
-      const { chosenEnvironment } = await new EnvironmentChooseAction(inquirer, pmacEnvironments).run()
-
-      environmentJson = chosenEnvironment
+      if (pmacEnvironments.length > 0) {
+        environmentJson = await new EnvironmentChooseAction(inquirer, pmacEnvironments).run()
+      } else {
+        this.log('No environment found for workspace, skipping environment...')
+      }
     }
 
     newman.run({

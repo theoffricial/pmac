@@ -4,12 +4,16 @@ import { PostmanCollection } from '../api/types/collection.types'
 import { PMACWorkspace } from '../../file-system/types'
 // import { TfsWorkspaceManager, TfsWorkspaceResourceManager } from '../../file-system'
 import { PostmanCollectionMetadata } from '../api/wrappers/collections.api'
-import { TfsWorkspaceManager } from '../../file-system'
+import { TfsWorkspaceManager, TfsWorkspaceResourceManager } from '../../file-system'
+import { PMCollectionFetchAction } from '.'
+import { PMACCollectionCreateAction } from './pmac-collection-create.action'
+import { WorkspaceResource } from '../api/types'
 // import { WorkspacePullAfterResourceUpdatedAction } from './workspace-pull-after-resource-updated.action'
 
 export class PMCollectionCreateAction implements IPMACAction<PostmanCollectionMetadata> {
   constructor(
     private readonly fsWorkspaceManager: TfsWorkspaceManager,
+    private readonly fsWorkspaceResourceManager: TfsWorkspaceResourceManager,
     private readonly pmApi: PostmanAPI,
     private readonly pmacWorkspace: PMACWorkspace,
     private readonly pmCollection: PostmanCollection,
@@ -42,6 +46,19 @@ export class PMCollectionCreateAction implements IPMACAction<PostmanCollectionMe
       throw new Error('pmac collection pmID not found')
     }
 
+    const pmCollection = await new PMCollectionFetchAction(
+      this.pmApi,
+      pmCollectionMetadata.uid,
+    ).run()
+
+    await this.fsWorkspaceResourceManager.writeWorkspaceResourceDataJson({
+      name: pmCollection.info.name,
+      pmacID: pmacMap.pmacID,
+      type: WorkspaceResource.Collection,
+      workspaceName: this.pmacWorkspace.name,
+      workspacePMACId: this.pmacWorkspace.pmacID,
+      workspaceType: this.pmacWorkspace.type,
+    }, pmCollection)
     pmacMap.pmID = pmCollectionMetadata.id
     pmacMap.pmUID = pmCollectionMetadata.uid
 

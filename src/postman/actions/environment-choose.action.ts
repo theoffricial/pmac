@@ -1,17 +1,17 @@
 import { Inquirer } from 'inquirer'
 import pad from 'pad'
 import { PostmanEnvironment } from '../api/types'
-import { IPmacAction } from './action.interface'
+import { IPMACAction } from './action.interface'
 
 export class EnvironmentChooseAction
-implements IPmacAction<PostmanEnvironment> {
+implements IPMACAction<PostmanEnvironment> {
   constructor(
     private readonly _inquirer: Inquirer,
     private readonly environments: PostmanEnvironment[],
     private readonly options: { customMessage?: string } = {},
   ) {}
 
-  async run(): Promise<{ chosenEnvironment: PostmanEnvironment; }> {
+  async run() {
     if (!Array.isArray(this.environments)) {
       throw new TypeError(EnvironmentChooseAction.name + ' invalid options passed.')
     } else if (this.environments.length === 0) {
@@ -33,6 +33,6 @@ implements IPmacAction<PostmanEnvironment> {
         name: 'environment',
       })
 
-    return { chosenEnvironment: answer.environment }
+    return answer.environment
   }
 }

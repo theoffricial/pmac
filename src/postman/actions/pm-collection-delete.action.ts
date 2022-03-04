@@ -15,10 +15,10 @@ implements IPMACAction<{ deletedPMCollectionUid: string; deletedPMCollectionId: 
   ) {}
 
   async run() {
-    const pmacMap = this.pmacWorkspace.environments?.find(pmacE => pmacE.pmUID === this.pmCollectionMetadata.uid)
+    const pmacMap = this.pmacWorkspace.collections.find(pmacE => pmacE.pmUID === this.pmCollectionMetadata.uid)
 
     if (!pmacMap) {
-      throw new Error(`pm environment uid:${this.pmCollectionMetadata.uid} not found in your pmac workspace`)
+      throw new Error(`pm collection uid:${this.pmCollectionMetadata.uid} not found in your pmac workspace`)
     }
 
     const {

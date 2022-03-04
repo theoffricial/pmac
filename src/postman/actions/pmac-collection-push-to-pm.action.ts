@@ -43,9 +43,11 @@ export class CollectionPushAction implements IPMACAction<PostmanCollectionMetada
     } catch {
       const collection = await new PMCollectionCreateAction(
         this.fsWorkspaceManager,
+        this.fsWorkspaceResourceManager,
         this.pmApi,
         this.pmacWorkspace,
-        this.pmCollection).run()
+        this.pmCollection,
+      ).run()
 
       pmCollectionMetadata = collection
       // await new PMACCollectionCreateAction(

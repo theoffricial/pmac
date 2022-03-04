@@ -21,7 +21,7 @@ export class PMACCollectionCreateAction implements IPMACAction<void> {
 
     const pmacID = PMACMap.generatePMACuuid()
 
-    await this.fsWorkspaceResourceManager.writeWorkspaceResourceDataJson({
+    await this.fsWorkspaceResourceManager.writeWorkspaceResourceDataJson<WorkspaceResource.Collection>({
       name: this.pmCollection.info.name,
       type: WorkspaceResource.Collection,
       pmacID,

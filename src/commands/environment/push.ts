@@ -42,12 +42,12 @@ export default class EnvironmentPush extends Command {
       this.error('No environments found', { exit: 1 })
     }
 
-    const { chosenEnvironment } = await new EnvironmentChooseAction(
+    const pmacEnvironment = await new EnvironmentChooseAction(
       inquirer,
       pmacEnvironments,
     ).run()
 
-    const environmentPMACMap = await new EnvironmentGetMetadataAction(chosenPMACWorkspace, chosenEnvironment).run()
+    const environmentPMACMap = await new EnvironmentGetMetadataAction(chosenPMACWorkspace, pmacEnvironment).run()
 
     // if (!environmentPMACMap) {
     //   this.error('Environment not found', { exit: 1 })
@@ -60,7 +60,7 @@ export default class EnvironmentPush extends Command {
       fsWorkspaceResourceManager,
       postmanApiInstance,
       chosenPMACWorkspace,
-      chosenEnvironment,
+      pmacEnvironment,
     ).run()
 
     this.log(`Environment '${pmEnvironmentMetadata.name} uid:${pmEnvironmentMetadata.uid}' updated`)

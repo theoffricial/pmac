@@ -62,7 +62,7 @@ export default class EnvironmentDelete extends Command {
       ).run()
 
       this.log(
-        `Environment pmacID:${deletedPMACID} pmUID:${deletedPMEnvironmentUid} deleted from both your PM account pmac.`,
+        `Environment pmacID:${deletedPMACID} pmUID:${deletedPMEnvironmentUid} deleted from both your PM account and pmac.`,
       )
     }
   }
