@@ -1,16 +1,16 @@
 import { Command, Flags } from '@oclif/core'
-
-import { convertOA3toPMPromise, getNewCollectionItemsFromOpenAPI } from '../../postman-to-openapi'
-import { PmacConfigurationManager } from '../../file-system'
-
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import path from 'path'
 import inquirer from 'inquirer'
-import { postmanApiInstance } from '../../postman/api'
-import { CollectionChooseAction, CollectionGetMetadataAction, CollectionPushAction, CollectionPushNewAction, CollectionUpdateFromOA3Action, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
-import { CollectionHandleDuplicationAction } from '../../postman/actions/collection-handle-duplication.action'
+
+import { convertOA3toPMPromise, getNewCollectionItemsFromOpenAPI } from '../../postman-to-openapi'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
+
+import { PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
 import { workspacePathValidator } from '../../validators'
-import { PostmanWorkspace } from '../../postman/api/types/workspace.types'
+import { PMACWorkspace } from '../../file-system/types'
+import { PostmanCollection } from '../../postman/api/types'
+import { PMACCollectionCreateAction } from '../../postman/actions/pmac-collection-create.action'
 
 export default class CollectionCreate extends Command {
   static description = 'Creates a new PM collection out of your service OpenApi V3 (swagger) specification.'
@@ -41,8 +41,6 @@ export default class CollectionCreate extends Command {
   async run(): Promise<void> {
     const { flags } = await this.parse(CollectionCreate)
 
-    const config = new PmacConfigurationManager()
-
     const collectionFromOpenApi = await convertOA3toPMPromise(
       {
         data: path.resolve(flags['open-api']),
@@ -51,77 +49,69 @@ export default class CollectionCreate extends Command {
       {},
     )
 
-    let workspace: PostmanWorkspace
+    let pmacWorkspace: PMACWorkspace
     if (flags.workspace && workspacePathValidator(flags.workspace)) {
-      const selectedWorkspace = config.getWorkspaceByPath(flags.workspace)
-      workspace = selectedWorkspace
+      pmacWorkspace = await fsWorkspaceManager.getPMACWorkspaceByPath(flags.workspace)
     } else {
-      const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
-        config,
+      const pmacWorkspaces = await new PMACWorkspaceGetAllAction(
+        fsWorkspaceManager,
       ).run()
 
-      const { chosenWorkspace } = await new WorkspaceChooseAction(
+      pmacWorkspace = await new PMACWorkspaceChooseAction(
         inquirer,
-        localWorkspaces,
+        pmacWorkspaces,
       ).run()
-
-      workspace = chosenWorkspace
     }
 
     if (!flags.workspace) {
-      const { userDecidedToUpdateInstead, duplicateCollections } = await new CollectionHandleDuplicationAction(
-        flags['open-api'],
-        inquirer,
-        postmanApiInstance,
-        config,
-        workspace,
-        collectionFromOpenApi.info.name,
-      ).run()
+      // const { userDecidedToUpdateInstead, duplicateCollections } = await new CollectionHandleDuplicationAction(
+      //   flags['open-api'],
+      //   inquirer,
+      //   postmanApiInstance,
+      //   config,
+      //   pmacWorkspace,
+      //   collectionFromOpenApi.info.name,
+      // ).run()
 
-      if (userDecidedToUpdateInstead) {
-        this.log('Collection creation terminated, Updates existing instead.')
+      // if (userDecidedToUpdateInstead) {
+      //   this.log('Collection creation terminated, Updates existing instead.')
 
-        // Duplicate to collection update, maybe split
-        const { chosenCollection } = await new CollectionChooseAction(inquirer, duplicateCollections).run()
+      //   // Duplicate to collection update, maybe split
+      //   const { chosenCollection } = await new CollectionChooseAction(inquirer, duplicateCollections).run()
 
-        const { updatedCollection } = await new CollectionUpdateFromOA3Action(workspace, chosenCollection, flags['open-api']).run()
-        const { collectionMetadata } = await new CollectionGetMetadataAction(workspace, chosenCollection).run()
+      //   const { updatedCollection } = await new CollectionCalculateUpdatedFromExistingAndOA3Action(pmacWorkspace, chosenCollection, flags['open-api']).run()
+      //   const { collectionMetadata } = await new PMACCollectionGetPMACMapAction(pmacWorkspace, chosenCollection).run()
 
-        await new CollectionPushAction(
-          config,
-          postmanApiInstance,
-          workspace,
-          collectionMetadata.uid,
-          updatedCollection,
-        ).run()
+      //   await new CollectionPushAction(
+      //     config,
+      //     postmanApiInstance,
+      //     pmacWorkspace,
+      //     collectionMetadata.uid,
+      //     updatedCollection,
+      //   ).run()
 
-        this.log(`Collection ${config.resourceNameConvention(collectionMetadata.name, collectionMetadata.uid)} updated.`)
-        this.exit()
-        return
-      }
+      //   this.log(`Collection ${config.resourceNameConvention(collectionMetadata.name, collectionMetadata.uid)} updated.`)
+      //   this.exit()
+      //   return
+      // }
     }
 
     // To process
-    const finalItem = getNewCollectionItemsFromOpenAPI(
+    const collectionItem = getNewCollectionItemsFromOpenAPI(
       collectionFromOpenApi.item,
       collectionFromOpenApi.item,
     )
 
-    const newCollection = {
+    const newPMCollection: PostmanCollection = {
       ...collectionFromOpenApi,
-      item: finalItem,
+      item: collectionItem,
     }
 
     try {
-      const { collection } = await new CollectionPushNewAction(
-        config,
-        postmanApiInstance,
-        workspace,
-        newCollection,
-      ).run()
+      await new PMACCollectionCreateAction(pmacWorkspace, newPMCollection, fsWorkspaceManager, fsWorkspaceResourceManager).run()
 
       this.log(
-        `Collection ${collection?.info?.name} created successfully!`,
+        `Collection ${newPMCollection?.info?.name} created successfully!`,
       )
     } catch (error) {
       this.error(error as any)

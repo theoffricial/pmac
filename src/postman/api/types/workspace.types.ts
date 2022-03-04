@@ -2,7 +2,7 @@ import {
   PostmanEnvironmentMetadata,
   PostmanMock,
   PostmanMonitor,
-} from '../types'
+} from './index'
 import { PostmanCollectionMetadata } from '../wrappers/collections.api'
 
 export interface PostmanWorkspace {
@@ -20,6 +20,8 @@ export type PostmanWorkspaceMetadata = Pick<
   PostmanWorkspace,
   'name' | 'id' | 'type'
 >;
+
+export type PMWorkspaceId = PostmanWorkspaceMetadata;
 
 export enum WorkspaceType {
   Personal = 'personal',

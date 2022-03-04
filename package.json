@@ -4,8 +4,8 @@
   "version": "0.1.2",
   "author": "unicop",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "bin": {
     "pmac": "./bin/run"
   },
@@ -36,7 +36,8 @@
     "newman": "^5.3.1",
     "newman-reporter-htmlextra": "^1.22.3",
     "openapi-to-postmanv2": "^2.13.0",
-    "pad": "^3.2.0"
+    "pad": "^3.2.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",

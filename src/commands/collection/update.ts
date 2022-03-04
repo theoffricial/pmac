@@ -1,11 +1,8 @@
 import { Command, Flags } from '@oclif/core'
 
-import { PmacConfigurationManager } from '../../file-system'
-
 import inquirer from 'inquirer'
-import { postmanApiInstance } from '../../postman/api'
-import { CollectionChooseAction, CollectionGetAllLocalAction, CollectionPushAction, CollectionUpdateFromOA3Action, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
-import { CollectionGetMetadataAction } from '../../postman/actions/collection-get-metadata.action'
+import { CollectionChooseAction, PMACCollectionGetAllAction, PMACCollectionCalculateUpdatedFromExistingAndOA3Action, PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 
 export default class CollectionUpdate extends Command {
   static description = `Updates PM collection following changes from your OpenApi V3 (swagger) specification,
@@ -37,44 +34,44 @@ Without overwrite defined PM events for the existing items (pre-request scripts,
   async run(): Promise<void> {
     const { flags } = await this.parse(CollectionUpdate)
 
-    const config = new PmacConfigurationManager()
-
-    const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
-      config,
+    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(
+      fsWorkspaceManager,
     ).run()
 
-    const { chosenWorkspace } = await new WorkspaceChooseAction(
+    const pmacWorkspace = await new PMACWorkspaceChooseAction(
       inquirer,
-      localWorkspaces,
+      pmacWorkspaces,
     ).run()
 
-    const { localCollections } = await new CollectionGetAllLocalAction(
-      config,
-      chosenWorkspace,
+    const pmacCollections = await new PMACCollectionGetAllAction(
+      fsWorkspaceResourceManager,
+      pmacWorkspace,
     ).run()
 
-    const { chosenCollection } = await new CollectionChooseAction(
+    const pmacCollection = await new CollectionChooseAction(
       inquirer,
-      localCollections,
+      pmacCollections,
     ).run()
 
-    const { updatedCollection } = await new CollectionUpdateFromOA3Action(
-      chosenWorkspace,
-      chosenCollection,
+    await new PMACCollectionCalculateUpdatedFromExistingAndOA3Action(
+      fsWorkspaceManager,
+      fsWorkspaceResourceManager,
+      pmacWorkspace,
+      pmacCollection,
       flags['open-api'],
     ).run()
 
-    const { collectionMetadata } = await new CollectionGetMetadataAction(
-      chosenWorkspace,
-      chosenCollection,
-    ).run()
+    // const { collectionMetadata } = await new PMACCollectionGetPMACMapAction(
+    //   chosenWorkspace,
+    //   chosenCollection,
+    // ).run()
 
-    await new CollectionPushAction(
-      config,
-      postmanApiInstance,
-      chosenWorkspace,
-      collectionMetadata.uid,
-      updatedCollection,
-    ).run()
+    // await new CollectionPushAction(
+    //   config,
+    //   postmanApiInstance,
+    //   chosenWorkspace,
+    //   collectionMetadata.uid,
+    //   updatedCollection,
+    // ).run()
   }
 }

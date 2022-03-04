@@ -15,5 +15,7 @@ oclif.manifest.json
 /tsconfig*.tsbuildinfo
 
 # .pmac
-/.pmac/private.json
 /.pmac/workspaces/personal
+/.pmac/workspaces/team
+/.pmac/__private
+/.pmac

@@ -38,6 +38,7 @@ export default class PmacConfigurationManager {
 
   // Workspace structure constants
   private WORKSPACE_METADATA_FILE_NAME = 'workspace.json';
+  private WORKSPACE_MAP_FILE_NAME = 'workspace-map.json';
   private POSTMAN_RESOURCE_PREFIX = 'postman_';
   private ALL_COLLECTIONS_PATTERN = `${WorkspaceResource.Collection}s/*.${this.POSTMAN_RESOURCE_PREFIX}${WorkspaceResource.Collection}.json`;
   private ALL_ENVIRONMENT_PATTERN = `${WorkspaceResource.Environment}s/*.${this.POSTMAN_RESOURCE_PREFIX}${WorkspaceResource.Environment}.json`;
@@ -303,6 +304,11 @@ export default class PmacConfigurationManager {
     return `${this.getWorkspacePath(workspaceMetadata)}/${
       this.WORKSPACE_METADATA_FILE_NAME
     }`
+  }
+
+  private getWorkspaceMapFilePath(workspaceMetadata: PostmanWorkspaceMetadata) {
+    const workspacePath = this.getWorkspacePath(workspaceMetadata)
+    return `${workspacePath}/${this.WORKSPACE_MAP_FILE_NAME}`
   }
 
   getWorkspace(workspaceMetadata: PostmanWorkspaceMetadata): PostmanWorkspace {

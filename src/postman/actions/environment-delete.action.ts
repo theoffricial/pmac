@@ -1,37 +1,37 @@
 import { PostmanAPI } from '../api'
-import { PostmanWorkspaceMetadata } from '../api/types/workspace.types'
-import { PmacConfigurationManager } from '../../file-system'
-import { IPmacAction } from './action.interface'
-import { EnvironmentDeleteLocalAction } from './environment-delete-local.action'
-import { EnvironmentDeleteRemoteAction } from './environment-delete-remote.action'
+import { PostmanEnvironmentMetadata } from '../api/types'
+import { TfsWorkspaceResourceManager } from '../../file-system'
+import { IPMACAction } from './action.interface'
+import { PMACEnvironmentDeleteAction } from './pmac-environment-delete.action'
+import { PMEnvironmentDeleteAction } from './pm-environment-delete.action'
+import { PMACWorkspace } from '../../file-system/types'
 
 export class EnvironmentDeleteAction
 implements
-  IPmacAction<{
-    uid: string;
-    id: string;
+  IPMACAction<{
+    deletedPMACID: string, deletedPMEnvironmentUid: string, deletedPMEnvironmentId: string;
   }> {
   constructor(
-    private config:PmacConfigurationManager,
-    private postmanApi: PostmanAPI,
-    private readonly workspaceMetadata: PostmanWorkspaceMetadata,
-    private readonly environmentUid: string,
+    private readonly fsWorkspaceResourceManager: TfsWorkspaceResourceManager,
+    private readonly postmanApi: PostmanAPI,
+    private readonly pmacWorkspace: PMACWorkspace,
+    private readonly pmEnvironmentMetadata: PostmanEnvironmentMetadata,
   ) {}
 
   async run() {
-    const { deletedEnvironment } = await new EnvironmentDeleteRemoteAction(
-      this.config,
+    const { deletedPMEnvironmentUid, deletedPMEnvironmentId } = await new PMEnvironmentDeleteAction(
+      this.fsWorkspaceResourceManager,
       this.postmanApi,
-      this.workspaceMetadata,
-      this.environmentUid,
+      this.pmacWorkspace,
+      this.pmEnvironmentMetadata,
     ).run()
 
-    await new EnvironmentDeleteLocalAction(
-      this.config,
-      this.workspaceMetadata,
-      this.environmentUid,
+    const { deletedPMACID } = await new PMACEnvironmentDeleteAction(
+      this.fsWorkspaceResourceManager,
+      this.pmacWorkspace,
+      this.pmEnvironmentMetadata,
     ).run()
 
-    return { deletedEnvironment }
+    return { deletedPMACID, deletedPMEnvironmentUid, deletedPMEnvironmentId }
   }
 }

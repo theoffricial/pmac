@@ -5,3 +5,7 @@ export interface IPmacAction<T = any> {
   //   constructor(pmacOra:PmacOra, _inquirer: typeof inquirer): any;
   run(): Promise<{ [key: string]: T }>;
 }
+
+export interface IPMACAction<T = void> {
+  run(): Promise<T>
+}
