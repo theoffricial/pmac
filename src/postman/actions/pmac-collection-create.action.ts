@@ -20,11 +20,13 @@ export class PMACCollectionCreateAction implements IPMACAction<void> {
     }
 
     const pmacID = PMACMap.generatePMACuuid()
+    const pmIDTmp = PMACMap.generateTemporaryPMACuuid()
 
     await this.fsWorkspaceResourceManager.writeWorkspaceResourceDataJson<WorkspaceResource.Collection>({
       name: this.pmCollection.info.name,
       type: WorkspaceResource.Collection,
       pmacID,
+      pmIDTmp,
       workspaceName: this.pmacWorkspace.name,
       workspacePMACId: this.pmacWorkspace.pmacID,
       workspaceType: this.pmacWorkspace.type,
@@ -32,7 +34,7 @@ export class PMACCollectionCreateAction implements IPMACAction<void> {
       pmUID: this.pmCollectionUid || '',
     }, this.pmCollection)
 
-    this.pmacWorkspace.collections.push({ pmacID, pmID: this.pmCollection.info._postman_id, pmUID: '' })
+    this.pmacWorkspace.collections.push({ pmacID, pmID: this.pmCollection.info._postman_id, pmIDTmp, pmUID: '' })
 
     await this.fsWorkspaceManager.writeWorkspaceDataJson(this.pmacWorkspace)
   }

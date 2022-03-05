@@ -1,4 +1,4 @@
-import { PostmanEnvironment, PostmanEnvironmentMetadata, WorkspaceResource } from '../api/types'
+import { PostmanEnvironment, WorkspaceResource } from '../api/types'
 import { IPMACAction } from './action.interface'
 import { PostmanAPI } from '../api'
 import { PMACMap, TfsWorkspaceManager, TfsWorkspaceResourceManager } from '../../file-system'
@@ -20,11 +20,13 @@ implements IPMACAction<void> {
     }
 
     const pmacID = PMACMap.generatePMACuuid()
+    const pmIDTmp = PMACMap.generateTemporaryPMACuuid()
 
     await this.fsWorkspaceResourceManager.writeWorkspaceResourceDataJson<WorkspaceResource.Environment>({
       name: this.newPmEnvironment.name,
       type: WorkspaceResource.Environment,
       pmacID,
+      pmIDTmp,
       workspaceName: this.pmacWorkspace.name,
       workspacePMACId: this.pmacWorkspace.pmacID,
       workspaceType: this.pmacWorkspace.type,
@@ -34,14 +36,14 @@ implements IPMACAction<void> {
       values: this.newPmEnvironment.values,
       name: this.newPmEnvironment.name,
       // tmp - for easy matching before pushing to PM
-      id: pmacID,
+      id: pmIDTmp,
       createdAt: '',
       isPublic: false,
       owner: '',
       updatedAt: '',
     })
 
-    this.pmacWorkspace.environments.push({ pmacID, pmID: '', pmUID: '' })
+    this.pmacWorkspace.environments.push({ pmacID, pmID: '', pmUID: '', pmIDTmp })
     await this.fsWorkspaceManager.writeWorkspaceDataJson(this.pmacWorkspace)
 
     // try {

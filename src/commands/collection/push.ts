@@ -73,6 +73,6 @@ export default class CollectionPush extends Command {
       pmacCollection,
     ).run()
 
-    this.log(`Collection '${pmacCollection.info?.name} uid:${pmCollectionMetadata.uid}' pushed`)
+    this.log(`Collection '${pmacCollection.info?.name} uid:${pmCollectionMetadata.uid}' pushed from pmac to your Postman account successfully.`)
   }
 }

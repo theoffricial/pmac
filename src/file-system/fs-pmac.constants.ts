@@ -66,6 +66,7 @@ export const PMAC_FILE_SYS = {
       },
     },
   },
+  PMAC_TEMPORARY_ID_PREFIX: `${PKG_NAME}tmp`,
   ENTITIES_CONVENTIONS: {
     NAME_CONVENTIONS: {
       WORKSPACE_NAME_TO_ID_SEPARATOR: '_',

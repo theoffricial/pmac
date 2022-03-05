@@ -125,7 +125,7 @@ class PostmanAPIAxiosInstance implements Partial<AxiosInstance> {
       (axiosError: AxiosError)  => {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
-        console.error(axiosError?.response?.data)
+        console.error(axiosError?.response?.data?.error?.message)
         return Promise.reject(axiosError)
       },
     )

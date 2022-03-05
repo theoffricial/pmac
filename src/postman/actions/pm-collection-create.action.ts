@@ -6,7 +6,6 @@ import { PMACWorkspace } from '../../file-system/types'
 import { PostmanCollectionMetadata } from '../api/wrappers/collections.api'
 import { TfsWorkspaceManager, TfsWorkspaceResourceManager } from '../../file-system'
 import { PMCollectionFetchAction } from '.'
-import { PMACCollectionCreateAction } from './pmac-collection-create.action'
 import { WorkspaceResource } from '../api/types'
 // import { WorkspacePullAfterResourceUpdatedAction } from './workspace-pull-after-resource-updated.action'
 
@@ -36,11 +35,13 @@ export class PMCollectionCreateAction implements IPMACAction<PostmanCollectionMe
       event: this.pmCollection.event,
       variable: this.pmCollection.variable,
     }).catch(error => {
-      console.log(error.config?.data?.error)
+      console.log(error.config?.data?.error?.message)
       throw error
     })
 
-    const pmacMap = this.pmacWorkspace.collections.find(pmacC => pmacC.pmID === this.pmCollection.info._postman_id)
+    const pmacMap = this.pmacWorkspace.collections.find(
+      pmacC => pmacC.pmID === this.pmCollection.info._postman_id ||
+      pmacC.pmIDTmp === this.pmCollection.info._postman_id)
 
     if (!pmacMap) {
       throw new Error('pmac collection pmID not found')
@@ -59,26 +60,15 @@ export class PMCollectionCreateAction implements IPMACAction<PostmanCollectionMe
       workspacePMACId: this.pmacWorkspace.pmacID,
       workspaceType: this.pmacWorkspace.type,
     }, pmCollection)
+
+    // reassign with real PM values
     pmacMap.pmID = pmCollectionMetadata.id
     pmacMap.pmUID = pmCollectionMetadata.uid
+    // remove pmID place holder tmp uuid
+    delete pmacMap.pmIDTmp
 
     this.fsWorkspaceManager.writeWorkspaceDataJson(this.pmacWorkspace)
 
     return pmCollectionMetadata
-
-    // Updating workspace data
-    // await new WorkspacePullAfterResourceUpdatedAction(
-    //   this.config,
-    //   this.postmanApi,
-    //   this.workspace.id,
-    // ).run()
-
-    // Pull collection after updating
-    // const { collection } = await new CollectionPullAction(
-    //   this.config,
-    //   this.postmanApi,
-    //   this.workspace,
-    //   collectionMetadata.uid,
-    // ).run()
   }
 }

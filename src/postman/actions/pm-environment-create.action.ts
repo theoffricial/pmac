@@ -35,7 +35,9 @@ export class PMEnvironmentCreateAction implements IPMACAction<PostmanEnvironment
     const pmacMap = this.pmacWorkspace.environments.find(pmacE =>
       pmacE.pmID === this.pmEnvironment.id ||
       // tmp solution before environment has solid PM id
-      pmacE.pmacID === this.pmEnvironment.id)
+      pmacE.pmacID === this.pmEnvironment.id ||
+      pmacE.pmIDTmp === this.pmEnvironment.id,
+    )
 
     if (!pmacMap) {
       throw new Error('pmac collection pmID not found')
@@ -53,6 +55,8 @@ export class PMEnvironmentCreateAction implements IPMACAction<PostmanEnvironment
     // reassign with real PM values
     pmacMap.pmID = newPMEnvironment.id
     pmacMap.pmUID = newPMEnvironment.uid
+    // remove pmID place holder tmp uuid
+    delete pmacMap.pmIDTmp
     this.fsWorkspaceManager.writeWorkspaceDataJson(this.pmacWorkspace)
 
     return newPMEnvironment

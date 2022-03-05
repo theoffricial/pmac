@@ -54,7 +54,7 @@ export default class EnvironmentPull extends Command {
     ).run()
 
     this.log(
-      `Environment ${pmEnvironmentMetadata.name} pulled into pmac.`,
+      `Environment '${pmEnvironmentMetadata.name} pmUID:${pmEnvironmentMetadata.uid}' pulled from your Postman account into pmac.`,
     )
   }
 }
