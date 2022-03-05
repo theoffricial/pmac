@@ -1,11 +1,11 @@
 import { Command } from '@oclif/core'
 
-import { PmacConfigurationManager } from '../../file-system'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
-import { EnterNameAction, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
-import { EnvironmentPushNewAction } from '../../postman/actions/environment-push-new.action'
+import { EnterNameAction, PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
+import { PMACEnvironmentCreateAction } from '../../postman/actions/pmac-environment-create.action'
 import { PostmanEnvironment } from '../../postman/api/types'
 
 export default class EnvironmentCreate extends Command {
@@ -21,22 +21,20 @@ export default class EnvironmentCreate extends Command {
   async run(): Promise<void> {
     await this.parse(EnvironmentCreate)
 
-    const config = new PmacConfigurationManager()
-
-    const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
-      config,
+    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(
+      fsWorkspaceManager,
     ).run()
 
-    const { chosenWorkspace } = await new WorkspaceChooseAction(
+    const pmacWorkspace = await new PMACWorkspaceChooseAction(
       inquirer,
-      localWorkspaces,
+      pmacWorkspaces,
     ).run()
 
     const { chosenName } = await new EnterNameAction(
       inquirer,
       'Enter a name for the new PM environment',
     ).run()
-    const newEnvironment: Pick<PostmanEnvironment, 'name' | 'values'> = {
+    const newPMEnvironment: Pick<PostmanEnvironment, 'name' | 'values'> = {
       name: chosenName,
       values: [
         {
@@ -48,15 +46,16 @@ export default class EnvironmentCreate extends Command {
       ],
     }
 
-    const { environment } = await new EnvironmentPushNewAction(
-      config,
+    const pmEnvironment = await new PMACEnvironmentCreateAction(
+      fsWorkspaceManager,
+      fsWorkspaceResourceManager,
       postmanApiInstance,
-      chosenWorkspace,
-      newEnvironment,
+      pmacWorkspace,
+      newPMEnvironment,
     ).run()
 
     this.log(
-      `Environment ${environment.name} created successfully.`,
+      `Environment ${newPMEnvironment.name} created successfully.`,
     )
   }
 }

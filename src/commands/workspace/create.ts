@@ -2,12 +2,11 @@ import { Command, Flags } from '@oclif/core'
 
 import inquirer from 'inquirer'
 
-import { WorkspacePushNewAction } from '../../postman/actions'
-import { postmanApiInstance } from '../../postman/api'
-import { PmacConfigurationManager } from '../../file-system'
+import { PMACWorkspaceCreateAction } from '../../postman/actions'
+import { fsWorkspaceManager } from '../../file-system'
 
 export default class WorkspaceCreate extends Command {
-  static description = 'Creates new PM collection'
+  static description = 'Creates new PMAC collection'
 
   static examples = [
     `$pmac collection create
@@ -24,19 +23,13 @@ export default class WorkspaceCreate extends Command {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { args, flags } = await this.parse(WorkspaceCreate)
 
-    const config = new PmacConfigurationManager()
-
-    const { newWorkspace } = await new WorkspacePushNewAction(
+    const pmacNewWorkspace = await new PMACWorkspaceCreateAction(
+      fsWorkspaceManager,
       inquirer,
-      config,
-      postmanApiInstance,
     ).run()
 
-    const pmacName = config.workspaceNameConvention(newWorkspace.name, newWorkspace.id)
-    console.log(
-      `Workspace ${pmacName} created for both postman account and repository successfully.`,
+    this.log(
+      `Workspace ${pmacNewWorkspace.name} pmacID:${pmacNewWorkspace.pmacID} created successfully.`,
     )
-
-    // this.log('.pmac environment initial successfully!')
   }
 }

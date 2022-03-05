@@ -1,10 +1,11 @@
 import { Command } from '@oclif/core'
 
-import { PmacConfigurationManager } from '../../file-system'
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
-import { CollectionChooseAction, CollectionPushAction, WorkspaceChooseAction } from '../../postman/actions'
-import { CollectionGetMetadataAction } from '../../postman/actions/collection-get-metadata.action'
+import { CollectionChooseAction, CollectionPushAction, PMACCollectionGetAllAction, PMACWorkspaceChooseAction } from '../../postman/actions'
+import { PMACCollectionGetPMACMapAction } from '../../postman/actions/collection-get-metadata.action'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
+import { WorkspaceResource } from '../../postman/api/types'
 
 export default class CollectionPush extends Command {
   static description = 'Pulls (Fetches) new updates about an existing collection on your .pmac (repository).'
@@ -28,45 +29,50 @@ export default class CollectionPush extends Command {
   async run(): Promise<void> {
     await this.parse(CollectionPush)
 
-    const config = new PmacConfigurationManager()
-    const { localWorkspaces } = await config.getWorkspaces()
+    const pmacWorkspaces = await fsWorkspaceManager.getAllPMACWorkspaces()
 
-    const { chosenWorkspace } = await new WorkspaceChooseAction(
+    const pmacWorkspace = await new PMACWorkspaceChooseAction(
       inquirer,
-      localWorkspaces,
+      pmacWorkspaces,
     ).run()
 
-    const { localCollections } = await config.getWorkspaceCollections(
-      chosenWorkspace,
-    )
+    const pmacCollections = await new PMACCollectionGetAllAction(
+      fsWorkspaceResourceManager,
+      pmacWorkspace,
+    ).run()
 
-    if (localCollections.length === 0) {
+    if (pmacCollections.length === 0) {
       this.error('No collections found', {
         exit: 1,
         message: 'No .pmac collections found.',
-        suggestions: ['Try to pull workspace, e.g.pmac workspace pull'],
+        suggestions: ['Try to pull workspace, e.g.pmac workspace pull', 'Try to create a new collection'],
       })
     }
 
-    const { chosenCollection } = await new CollectionChooseAction(
+    const pmacCollection = await new CollectionChooseAction(
       inquirer,
-      localCollections,
+      pmacCollections,
     ).run()
 
-    const { collectionMetadata } = await new CollectionGetMetadataAction(chosenWorkspace, chosenCollection).run()
+    const collectionPMACMap = await new PMACCollectionGetPMACMapAction(pmacWorkspace, pmacCollection).run()
 
-    if (!chosenCollection) {
-      this.error('Collection not found', { exit: 1, message: 'Chosen collection has an issue.', code: 'invalid choose' })
-    }
+    // if (!collectionPMACMap) {
+    //   this.error('pmac collection not found', { exit: 1 })
+    // } else if (!collectionPMACMap.pmUID) {
+    //   this.error('pmac collection found, but was lacking the pmUID required to push the collection to PM.')
+    // }
 
-    await new CollectionPushAction(
-      config,
+    const pmCollectionUid = collectionPMACMap?.pmUID || ''
+
+    const pmCollectionMetadata = await new CollectionPushAction(
+      fsWorkspaceManager,
+      fsWorkspaceResourceManager,
       postmanApiInstance,
-      chosenWorkspace,
-      collectionMetadata.uid,
-      chosenCollection,
+      pmacWorkspace,
+      pmCollectionUid,
+      pmacCollection,
     ).run()
 
-    this.log(`Collection '${collectionMetadata.uid}' updated`)
+    this.log(`Collection '${pmacCollection.info?.name} uid:${pmCollectionMetadata.uid}' pushed from pmac to your Postman account successfully.`)
   }
 }

@@ -1,5 +1,6 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-import pmacConfigLoader from './config-loader'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import { fsPrivateManager } from '../../file-system'
+
 export interface PmacAxiosResponse<TData = unknown, RRequest = any>
   extends AxiosResponse<TData, RRequest> {
   postmanAccountApiRateLimits: {
@@ -74,16 +75,17 @@ class PostmanAPIAxiosInstance implements Partial<AxiosInstance> {
     return this.axiosInstance.get(url, config)
   }
 
-  #setPostmanInterceptors() {
+  async #setPostmanInterceptors() {
     if (!this.axiosInstance) return
+    const privateJson = await fsPrivateManager.getPrivateConfig()
+
     this.axiosInstance.interceptors.request.use(
       config => {
         // Do something before request is sent
-        const pmacConfig = pmacConfigLoader()
         if (config.headers && !config.headers['X-Api-Key']) {
           config.headers = {
             ...config.headers,
-            'X-Api-Key': pmacConfig?.apiKey || '',
+            'X-Api-Key': privateJson?.apiKey || '',
           }
         }
 
@@ -120,11 +122,11 @@ class PostmanAPIAxiosInstance implements Partial<AxiosInstance> {
         // Do something with response data
         return response as PmacAxiosResponse
       },
-      error => {
+      (axiosError: AxiosError)  => {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
-        console.error(error)
-        return Promise.reject(error)
+        console.error(axiosError?.response?.data?.error?.message)
+        return Promise.reject(axiosError)
       },
     )
   }

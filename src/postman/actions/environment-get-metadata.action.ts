@@ -1,20 +1,20 @@
+import { PMACWorkspace } from '../../file-system/types'
+import { PMAC_MAP } from '../../file-system/types/pmac-map'
 import { PostmanEnvironment } from '../api/types'
-import { PostmanWorkspace } from '../api/types/workspace.types'
-import { PostmanCollectionMetadata } from '../api/wrappers/collections.api'
-import { IPmacAction } from './action.interface'
+import { IPMACAction } from './action.interface'
 
 export class EnvironmentGetMetadataAction
-implements IPmacAction<PostmanCollectionMetadata> {
+implements IPMACAction<PMAC_MAP | undefined> {
   constructor(
-    private readonly workspace: PostmanWorkspace,
+    private readonly pmacWorkspace: PMACWorkspace,
     private readonly environment: PostmanEnvironment,
   ) {}
 
   async run() {
-    const environmentMetadata = this.workspace.environments.find(
-      c => c.id === this.environment.id,
-    ) as PostmanCollectionMetadata
+    const environmentMetadata = this.pmacWorkspace.environments?.find(
+      pmacE => pmacE.pmID === this.environment.id,
+    )
 
-    return { environmentMetadata }
+    return environmentMetadata
   }
 }

@@ -49,7 +49,7 @@ export class PostmanEnvironmentsAPI {
     config?: AxiosRequestConfig<any>,
   ) {
     return this.pmacAxiosInstance.put<{
-      environmentMinMetadata: PostmanEnvironmentMinMetadata;
+      environment: PostmanEnvironmentMinMetadata;
     }>(
       this.environmentsAPIUrls.updateEnvironment(environmentUid),
       { environment: update },

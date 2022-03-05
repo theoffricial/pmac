@@ -1,31 +1,29 @@
 import { PostmanAPI } from '../api'
-import { PostmanWorkspaceMetadata } from '../api/types/workspace.types'
-import { PmacConfigurationManager } from '../../file-system'
-import { IPmacAction } from './action.interface'
-import { WorkspaceDeleteLocalAction } from './workspace-delete-local.action'
-import { WorkspaceDeleteRemoteAction } from './workspace-delete-remote.action'
+import { PMACWorkspaceDeleteAction } from './pmac-workspace-delete.action'
+import { PMWorkspaceDeleteAction } from './pm-workspace-delete.action'
+import { PMACWorkspaceID } from '../../file-system/types'
+import { IPMACAction } from './action.interface'
+import { TfsWorkspaceManager } from '../../file-system'
 
 export class WorkspaceDeleteAction
-implements IPmacAction<Pick<PostmanWorkspaceMetadata, 'id'>> {
+implements IPMACAction<{ deletedPMWorkspaceId: string }> {
   constructor(
-    private readonly config:PmacConfigurationManager,
+    private readonly wid: PMACWorkspaceID,
+    private readonly fsWorkspaceManager: TfsWorkspaceManager,
     private readonly postmanApi: PostmanAPI,
-    private readonly workspaceMetadata: PostmanWorkspaceMetadata,
   ) {}
 
   async run() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { deletedWorkspace } = await new WorkspaceDeleteRemoteAction(
+    const { deletedPMWorkspaceId } = await new PMWorkspaceDeleteAction(
       this.postmanApi,
-      this.workspaceMetadata,
+      this.wid,
     ).run()
 
-    const { deletedWorkspace: localDeletedWorkspace } =
-      await new WorkspaceDeleteLocalAction(
-        this.config,
-        this.workspaceMetadata,
-      ).run()
+    await new PMACWorkspaceDeleteAction(
+      this.fsWorkspaceManager,
+      this.wid,
+    ).run()
 
-    return { deletedWorkspace: localDeletedWorkspace }
+    return { deletedPMWorkspaceId }
   }
 }

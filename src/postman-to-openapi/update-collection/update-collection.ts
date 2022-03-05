@@ -49,7 +49,7 @@ export function getNewCollectionItemsFromOpenAPI(
   for (const newRequest of oaRequests) {
     const currentRequest = currentRequestsMap.get(newRequest.name)
 
-    if (isPMItemHasRequestPath(newRequest)) {
+    if (Array.isArray(newRequest?.request?.url?.path)) {
       setItemRequestPath(newRequest)
     }
 
@@ -113,33 +113,26 @@ export function getNewCollectionItemsFromOpenAPI(
   })
 }
 
-// Check if item request has any url parameters
-function isPMItemHasRequestPath(item: PostmanCollectionItem) {
-  return Boolean(item &&
-    item.request &&
-    item.request.url &&
-    item.request.url.path &&
-    Array.isArray(item.request.url.path))
-}
-
 // Set new path parameters for request item - item.request.url.path
 function setItemRequestPath(item: PostmanCollectionItem) {
-  (item.request as any).url.path = convertPathParamsToPMVariables(item)
+  if (item && item.request && item.request.url && Array.isArray(item.request.url.path)) {
+    item.request.url.path = convertPathParametersToPMEnvVars(item.request.url.path)
+  }
 }
 
-// Converts path params from OA3 e.g. :petId to PM variables e.g. {{petId}}
-function convertPathParamsToPMVariables(requestItem: PostmanCollectionItem) {
-  if (isPMItemHasRequestPath(requestItem)) {
-    const path = requestItem.request?.url.path || []
-    const fixedPath = path.map((pathFragment: string) => {
-      return pathFragment.startsWith(':') ? replaceOA3PathParameterToPMVariableFormat(pathFragment) : pathFragment
-    })
-    return fixedPath
-  }
+const oa3PathParamPrefix = ':'
+const pmEnvVarPrefix = '{{'
+const pmEnvVarSuffix = '}}'
 
-  return requestItem.request?.url.path || []
+// Converts path params from OA3 e.g. :petId to PM variables e.g. {{petId}}
+function convertPathParametersToPMEnvVars(path: string[]) {
+  const converted = path.map((fragment: string) => {
+    return fragment.startsWith(oa3PathParamPrefix) ? replaceOA3PathParameterToPMVariableFormat(fragment) : fragment
+  })
+  return converted
 }
 
 function replaceOA3PathParameterToPMVariableFormat(pathParameter: string) {
-  return `${pathParameter.replace(':', '{{')}}}`
+  const prefixReplaced = pathParameter.replace(oa3PathParamPrefix, pmEnvVarPrefix)
+  return prefixReplaced + pmEnvVarSuffix
 }

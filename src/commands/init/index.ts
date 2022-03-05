@@ -1,6 +1,6 @@
 import { Command, Flags } from '@oclif/core'
 import Listr from 'listr'
-import { PmacConfigurationManager } from '../../file-system'
+import { fsMainManager, fsPrivateManager } from '../../file-system'
 import { pmakValidator } from '../../validators'
 
 export default class PmacInit extends Command {
@@ -26,7 +26,6 @@ export default class PmacInit extends Command {
 
   async run(): Promise<void> {
     const { flags } = await this.parse(PmacInit)
-    const config = new PmacConfigurationManager()
     const tasks = new Listr([
       {
         title: 'Validating api key',
@@ -41,8 +40,8 @@ export default class PmacInit extends Command {
       },
       {
         title: 'Initial .pmac environment',
-        task: (ctx, _task) => {
-          config.init({ force: true })
+        task: async  (ctx, _task) => {
+          await fsMainManager.init({ overwrite: true })
           ctx.apiKey = flags['api-key']
           // this.log('.pmac environment initial successfully!')
         },
@@ -50,12 +49,12 @@ export default class PmacInit extends Command {
       {
         title: 'Set your api key in .pmac',
         enabled: ctx => ctx.apiKey,
-        task: ctx => {
-          config.saveApiKey(ctx.apiKey)
+        task: async ctx => {
+          await fsPrivateManager.createPMACPrivateConfig({ apiKey: ctx.apiKey })
           // this.log('.pmac set your api key, it is important to integrate with postman API.')
         },
       },
-    ])
+    ], { concurrent: false })
 
     await tasks.run()
     // config.init({ force: true })

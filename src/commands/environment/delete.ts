@@ -1,9 +1,9 @@
 import { Command, Flags } from '@oclif/core'
 
 import inquirer from 'inquirer'
-import { PmacConfigurationManager } from '../../file-system'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 import { postmanApiInstance } from '../../postman/api'
-import { EnvironmentDeleteLocalAction, EnvironmentDeleteRemoteAction, EnvironmentFetchAllAction, EnvironmentMetadataChooseAction, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
+import { PMACEnvironmentDeleteAction, PMEnvironmentDeleteAction, PMEnvironmentFetchAllAction, PMEnvironmentMetadataChooseAction, PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
 
 import { EnvironmentDeleteAction } from '../../postman/actions/environment-delete.action'
 
@@ -16,56 +16,53 @@ export default class EnvironmentDelete extends Command {
   ]
 
   static flags = {
-    'remote-only': Flags.boolean({ char: 'r', description: 'Removes environment only from your PM account, keeps workspace in .pmac (repository)', required: false }),
-    'local-only': Flags.boolean({ char: 'l', description: 'Removes environment only from .pmac, keeps workspace in your PM account (remote)', required: false }),
+    'pm-only': Flags.boolean({ char: 'r', description: 'Removes environment only from your PM account, keeps workspace in .pmac (repository)', required: false }),
+    'pmac-only': Flags.boolean({ char: 'l', description: 'Removes environment only from .pmac, keeps workspace in your PM account (remote)', required: false }),
   }
 
   async run(): Promise<void> {
     const { flags } = await this.parse(EnvironmentDelete)
 
-    const config = new PmacConfigurationManager()
-
-    const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
-      config,
+    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(fsWorkspaceManager,
     ).run()
 
-    const { chosenWorkspace } = await new WorkspaceChooseAction(
+    const chosenPMACWorkspace = await new PMACWorkspaceChooseAction(
       inquirer,
-      localWorkspaces,
+      pmacWorkspaces,
     ).run()
 
-    const { environmentsMetadata } = await new EnvironmentFetchAllAction(
+    const pmEnvironmentsMetadata = await new PMEnvironmentFetchAllAction(
       postmanApiInstance,
-      chosenWorkspace,
+      chosenPMACWorkspace,
     ).run()
 
-    const { chosenEnvironment } = await new EnvironmentMetadataChooseAction(
+    const chosenPMEnvironmentMetadata = await new PMEnvironmentMetadataChooseAction(
       inquirer,
-      environmentsMetadata,
+      pmEnvironmentsMetadata,
     ).run()
 
-    const pmacEnvironmentName = config.resourceNameConvention(chosenEnvironment.name, chosenEnvironment.uid)
+    // const pmacEnvironmentName = config.resourceNameConvention(chosenEnvironment.name, chosenEnvironment.uid)
 
-    if (flags['local-only']) {
-      await new EnvironmentDeleteLocalAction(config, chosenWorkspace, chosenEnvironment.uid).run()
+    if (flags['pmac-only']) {
+      const { deletedPMACID } = await new PMACEnvironmentDeleteAction(fsWorkspaceResourceManager, chosenPMACWorkspace, chosenPMEnvironmentMetadata).run()
       this.log(
-        `Environment ${pmacEnvironmentName} deleted from .pmac (repository).`,
+        `Environment pmacID:${deletedPMACID} deleted from pmac.`,
       )
-    } else if (flags['remote-only']) {
-      await new EnvironmentDeleteRemoteAction(config, postmanApiInstance, chosenWorkspace, chosenEnvironment.uid).run()
+    } else if (flags['pm-only']) {
+      const { deletedPMEnvironmentUid } = await new PMEnvironmentDeleteAction(fsWorkspaceResourceManager, postmanApiInstance, chosenPMACWorkspace, chosenPMEnvironmentMetadata).run()
       this.log(
-        `Environment ${pmacEnvironmentName} deleted from your PM account (remote).`,
+        `Environment pmUID:${deletedPMEnvironmentUid} deleted from your PM account.`,
       )
     } else {
-      await new EnvironmentDeleteAction(
-        config,
+      const { deletedPMACID, deletedPMEnvironmentUid } = await new EnvironmentDeleteAction(
+        fsWorkspaceResourceManager,
         postmanApiInstance,
-        chosenWorkspace,
-        chosenEnvironment.uid,
+        chosenPMACWorkspace,
+        chosenPMEnvironmentMetadata,
       ).run()
 
       this.log(
-        `Environment ${pmacEnvironmentName} deleted from both your PM account (remote) and ${config.PMAC_FOLDER_NAME} (repository).`,
+        `Environment pmacID:${deletedPMACID} pmUID:${deletedPMEnvironmentUid} deleted from both your PM account and pmac.`,
       )
     }
   }

@@ -1,9 +1,9 @@
 import { Command } from '@oclif/core'
 
-import { PmacConfigurationManager } from '../../file-system'
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
-import { CollectionFetchAllAction, CollectionMetadataChooseAction, CollectionPullAction, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
+import { PMCollectionFetchAllAction, PMCollectionMetadataChooseAction, CollectionPullAction, PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 
 export default class CollectionPull extends Command {
   static description = 'Pulls (Fetches) new updates about an existing collection on your .pmac (repository).'
@@ -27,37 +27,33 @@ export default class CollectionPull extends Command {
   async run(): Promise<void> {
     await this.parse(CollectionPull)
 
-    const config = new PmacConfigurationManager()
-
-    const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
-      config,
+    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(
+      fsWorkspaceManager,
     ).run()
 
-    const { chosenWorkspace } = await new WorkspaceChooseAction(
+    const pmacWorkspace = await new PMACWorkspaceChooseAction(
       inquirer,
-      localWorkspaces,
+      pmacWorkspaces,
     ).run()
 
-    const { collectionsMetadata } = await new CollectionFetchAllAction(
+    const pmCollectionsMetadata = await new PMCollectionFetchAllAction(
       postmanApiInstance,
-      chosenWorkspace,
+      pmacWorkspace,
     ).run()
 
-    const { chosenCollection } = await new CollectionMetadataChooseAction(
+    const pmCollectionMetadata = await new PMCollectionMetadataChooseAction(
       inquirer,
-      collectionsMetadata,
+      pmCollectionsMetadata,
     ).run()
 
     await new CollectionPullAction(
-      config,
+      fsWorkspaceResourceManager,
       postmanApiInstance,
-      chosenWorkspace,
-      chosenCollection.uid,
+      pmacWorkspace,
+      pmCollectionMetadata.uid,
     ).run()
-
-    const pmacName = config.resourceNameConvention(chosenCollection.name, chosenCollection.uid)
     this.log(
-      `Collection ${pmacName} pulled into repository.`,
+      `Collection ${pmCollectionMetadata.name} from Postman pulled into pmac.`,
     )
   }
 }

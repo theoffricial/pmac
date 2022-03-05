@@ -2,9 +2,9 @@ import { Command, Flags } from '@oclif/core'
 
 import inquirer from 'inquirer'
 
-import { WorkspaceFetchAction, WorkspaceFetchAllAction, WorkspaceMetadataChooseAction, WorkspacePullAction } from '../../postman/actions'
+import { PMWorkspaceFetchAction, PMWorkspaceFetchAllAction, PMWorkspaceMetadataChooseAction, PMWorkspacePullToPMACAction } from '../../postman/actions'
 import { postmanApiInstance } from '../../postman/api'
-import { PmacConfigurationManager } from '../../file-system'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 
 export default class WorkspacePull extends Command {
   static description = 'Pulls a single workspace from PM account'
@@ -20,24 +20,25 @@ export default class WorkspacePull extends Command {
   }
 
   async run(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { flags } = await this.parse(WorkspacePull)
-
-    const { workspacesMetadata } = await new WorkspaceFetchAllAction(
+    const { pmWorkspacesMetadata } = await new PMWorkspaceFetchAllAction(
       postmanApiInstance,
     ).run()
 
-    const { chosenWorkspaceMetadata: chosenWorkspace } =
-    await new WorkspaceMetadataChooseAction(inquirer, workspacesMetadata).run()
+    const chosenPMWorkspaceMetadata =
+    await new PMWorkspaceMetadataChooseAction(inquirer, pmWorkspacesMetadata).run()
 
-    const { workspace } = await new WorkspaceFetchAction(
+    const pmWorkspace = await new PMWorkspaceFetchAction(
       postmanApiInstance,
-      chosenWorkspace.id,
+      chosenPMWorkspaceMetadata.id,
     ).run()
-    const config = new PmacConfigurationManager()
 
-    await new WorkspacePullAction(config, postmanApiInstance, workspace).run()
+    await new PMWorkspacePullToPMACAction(
+      fsWorkspaceManager,
+      fsWorkspaceResourceManager,
+      postmanApiInstance,
+      pmWorkspace,
+    ).run()
 
-    console.log('Workspace pulled successfully.\n')
+    this.log('Workspace pulled successfully.')
   }
 }

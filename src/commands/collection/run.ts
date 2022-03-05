@@ -1,8 +1,8 @@
 import { Command, Flags } from '@oclif/core'
 import inquirer from 'inquirer'
-import { PmacConfigurationManager } from '../../file-system'
-import { CollectionChooseAction, CollectionGetAllLocalAction, EnvironmentChooseAction, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
-import { EnvironmentGetAllLocalAction } from '../../postman/actions/environment-get-all-local.action'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
+import { CollectionChooseAction, PMACCollectionGetAllAction, EnvironmentChooseAction, PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
+import { PMACEnvironmentGetAllAction } from '../../postman/actions/pmac-environment-get-all.action'
 import newman from 'newman'
 import { collectionPathValidator, environmentPathValidator } from '../../validators'
 import { PostmanEnvironment } from '../../postman/api/types'
@@ -435,15 +435,14 @@ export default class CollectionRun extends Command {
 
   async run(): Promise<void> {
     const { flags } = await this.parse(CollectionRun)
-    const config = new PmacConfigurationManager()
 
-    const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
-      config,
+    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(
+      fsWorkspaceManager,
     ).run()
 
-    const { chosenWorkspace } = await new WorkspaceChooseAction(
+    const pmacWorkspace = await new PMACWorkspaceChooseAction(
       inquirer,
-      localWorkspaces,
+      pmacWorkspaces,
     ).run()
 
     // Environment
@@ -453,23 +452,23 @@ export default class CollectionRun extends Command {
         this.error('collection path is invalid, please use .pmac valid collection path')
       }
     } else {
-      const { localCollections } = await new CollectionGetAllLocalAction(
-        config,
-        chosenWorkspace,
+      const pmacCollections = await new PMACCollectionGetAllAction(
+        fsWorkspaceResourceManager,
+        pmacWorkspace,
       ).run()
 
-      if (localCollections.length === 0) {
+      if (pmacCollections.length === 0) {
         throw new Error(
-          `No collections found for workspace '${chosenWorkspace.name}'`,
+          `No collections found for workspace '${pmacWorkspace.name}'`,
         )
       }
 
-      const { chosenCollection } = await new CollectionChooseAction(
+      const pmacCollection = await new CollectionChooseAction(
         inquirer,
-        localCollections,
+        pmacCollections,
       ).run()
 
-      collectionJson = chosenCollection
+      collectionJson = pmacCollection
     }
 
     // Environment
@@ -480,17 +479,17 @@ export default class CollectionRun extends Command {
       }
     } else if (!flags['skip-environment']) {
       // if (!commandAndOptions.environment) {
-      const { localEnvironments } = await new EnvironmentGetAllLocalAction(
-        config,
-        chosenWorkspace,
+      const pmacEnvironments = await new PMACEnvironmentGetAllAction(
+        fsWorkspaceResourceManager,
+        pmacWorkspace,
       ).run()
 
-      const { chosenEnvironment } = await new EnvironmentChooseAction(inquirer, localEnvironments).run()
-
-      environmentJson = chosenEnvironment
+      if (pmacEnvironments.length > 0) {
+        environmentJson = await new EnvironmentChooseAction(inquirer, pmacEnvironments).run()
+      } else {
+        this.log('No environment found for workspace, skipping environment...')
+      }
     }
-
-    console.log(flags)
 
     newman.run({
       collection: flags.collection || collectionJson,

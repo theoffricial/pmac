@@ -1,9 +1,9 @@
 import { Command } from '@oclif/core'
 
-import { PmacConfigurationManager } from '../../file-system'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
-import { EnvironmentChooseAction, EnvironmentGetAllLocalAction, EnvironmentGetMetadataAction, EnvironmentPushAction, WorkspaceChooseAction } from '../../postman/actions'
+import { EnvironmentChooseAction, PMACEnvironmentGetAllAction, EnvironmentGetMetadataAction, PMACWorkspaceChooseAction, EnvironmentPushAction } from '../../postman/actions'
 
 export default class EnvironmentPush extends Command {
   static description = 'Pushes (Fetches) environment updates to your PM account (remote) from your .pmac (repository).'
@@ -26,43 +26,43 @@ export default class EnvironmentPush extends Command {
 
   async run(): Promise<void> {
     await this.parse(EnvironmentPush)
+    const pmacWorkspaces = await fsWorkspaceManager.getAllPMACWorkspaces()
 
-    const config = new PmacConfigurationManager()
-    const { localWorkspaces } = await config.getWorkspaces()
-
-    const { chosenWorkspace } = await new WorkspaceChooseAction(
+    const chosenPMACWorkspace = await new PMACWorkspaceChooseAction(
       inquirer,
-      localWorkspaces,
+      pmacWorkspaces,
     ).run()
 
-    const { localEnvironments } = await new EnvironmentGetAllLocalAction(
-      config,
-      chosenWorkspace,
+    const pmacEnvironments = await new PMACEnvironmentGetAllAction(
+      fsWorkspaceResourceManager,
+      chosenPMACWorkspace,
     ).run()
 
-    if (localEnvironments.length === 0) {
+    if (pmacEnvironments.length === 0) {
       this.error('No environments found', { exit: 1 })
     }
 
-    const { chosenEnvironment } = await new EnvironmentChooseAction(
+    const pmacEnvironment = await new EnvironmentChooseAction(
       inquirer,
-      localEnvironments,
+      pmacEnvironments,
     ).run()
 
-    const { environmentMetadata } = await new EnvironmentGetMetadataAction(chosenWorkspace, chosenEnvironment).run()
+    const environmentPMACMap = await new EnvironmentGetMetadataAction(chosenPMACWorkspace, pmacEnvironment).run()
 
-    if (!environmentMetadata) {
-      this.error('Environment not found', { exit: 1 })
-    }
-
-    await new EnvironmentPushAction(
-      config,
+    // if (!environmentPMACMap) {
+    //   this.error('Environment not found', { exit: 1 })
+    // } else if (!environmentPMACMap.pmUID) {
+    //   this.error('PMAC Environment found, but was lacking the pmUID required to push the environment to PM.')
+    // }
+    const pmEnvironmentUid = environmentPMACMap?.pmUID || ''
+    const pmEnvironmentMetadata = await new EnvironmentPushAction(
+      fsWorkspaceManager,
+      fsWorkspaceResourceManager,
       postmanApiInstance,
-      chosenWorkspace,
-      environmentMetadata.uid,
-      chosenEnvironment,
+      chosenPMACWorkspace,
+      pmacEnvironment,
     ).run()
 
-    this.log(`Environment '${environmentMetadata.uid}' updated`)
+    this.log(`Environment '${pmEnvironmentMetadata.name} uid:${pmEnvironmentMetadata.uid}' updated`)
   }
 }

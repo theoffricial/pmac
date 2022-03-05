@@ -1,34 +1,33 @@
 import { PostmanAPI } from '../api'
-import { PostmanWorkspaceMetadata } from '../api/types/workspace.types'
 import { PostmanCollectionMetadata } from '../api/wrappers/collections.api'
-import { PmacConfigurationManager } from '../../file-system'
-import { IPmacAction } from './action.interface'
-import { CollectionDeleteLocalAction } from './collection-delete-local.action'
-import { CollectionDeleteRemoteAction } from './collection-delete-remote.action'
+import { TfsWorkspaceResourceManager } from '../../file-system'
+import { IPMACAction } from './action.interface'
+import { PMCollectionDeleteAction } from './pm-collection-delete.action'
+import { PMACWorkspace } from '../../file-system/types'
 
 export class CollectionDeleteAction
-implements IPmacAction<PostmanCollectionMetadata> {
+implements IPMACAction<void> {
   constructor(
-    private config: PmacConfigurationManager,
+    private readonly fsWorkspaceResourceManager: TfsWorkspaceResourceManager,
     private postmanApi: PostmanAPI,
-    private readonly workspace: PostmanWorkspaceMetadata,
-    private readonly collectionUid: string,
+    private readonly pmacWorkspace: PMACWorkspace,
+    private readonly pmCollectionMetadata: PostmanCollectionMetadata,
   ) {}
 
-  async run(): Promise<{ deletedCollection: PostmanCollectionMetadata; }> {
-    const { deletedCollection } = await new CollectionDeleteRemoteAction(
-      this.config,
+  async run() {
+    const { deletedPMCollectionId, deletedPMCollectionUid } = await new PMCollectionDeleteAction(
+      this.fsWorkspaceResourceManager,
       this.postmanApi,
-      this.workspace,
-      this.collectionUid,
+      this.pmacWorkspace,
+      this.pmCollectionMetadata,
     ).run()
 
-    await new CollectionDeleteLocalAction(
-      this.config,
-      this.workspace,
-      this.collectionUid,
-    ).run()
+    // await new PMACCollectionDeleteAction(
+    //   this.fsWorkspaceResourceManager,
+    //   this.pmacWorkspace,
+    //   this.pmCollectionMetadata,
+    // ).run()
 
-    return { deletedCollection }
+    // return { deletedPMCollectionId, deletedPMCollectionUid }
   }
 }

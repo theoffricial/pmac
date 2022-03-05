@@ -1,9 +1,9 @@
 import { Command } from '@oclif/core'
 
-import { PmacConfigurationManager } from '../../file-system'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
-import { EnvironmentFetchAllAction, EnvironmentMetadataChooseAction, EnvironmentPullAction, WorkspaceChooseAction, WorkspaceGetAllLocalAction } from '../../postman/actions'
+import { PMEnvironmentFetchAllAction, PMEnvironmentMetadataChooseAction, PMEnvironmentPullToPMACAction, PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
 
 export default class EnvironmentPull extends Command {
   static description = 'Pulls (Fetches) new updates about an existing collection on your .pmac (repository).'
@@ -27,37 +27,34 @@ export default class EnvironmentPull extends Command {
   async run(): Promise<void> {
     await this.parse(EnvironmentPull)
 
-    const config = new PmacConfigurationManager()
-
-    const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
-      config,
+    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(
+      fsWorkspaceManager,
     ).run()
 
-    const { chosenWorkspace } = await new WorkspaceChooseAction(
+    const pmacWorkspace = await new PMACWorkspaceChooseAction(
       inquirer,
-      localWorkspaces,
+      pmacWorkspaces,
     ).run()
 
-    const { environmentsMetadata } = await new EnvironmentFetchAllAction(
+    const pmEnvironmentsMetadata = await new PMEnvironmentFetchAllAction(
       postmanApiInstance,
-      chosenWorkspace,
+      pmacWorkspace,
     ).run()
 
-    const { chosenEnvironment } = await new EnvironmentMetadataChooseAction(
+    const pmEnvironmentMetadata = await new PMEnvironmentMetadataChooseAction(
       inquirer,
-      environmentsMetadata,
+      pmEnvironmentsMetadata,
     ).run()
 
-    await new EnvironmentPullAction(
-      config,
+    await new PMEnvironmentPullToPMACAction(
+      fsWorkspaceResourceManager,
       postmanApiInstance,
-      chosenWorkspace,
-      chosenEnvironment.uid,
+      pmacWorkspace,
+      pmEnvironmentMetadata.uid,
     ).run()
 
-    const pmacEnvironmentName = config.resourceNameConvention(chosenEnvironment.name, chosenEnvironment.uid)
     this.log(
-      `Environment ${pmacEnvironmentName} pulled into repository.`,
+      `Environment '${pmEnvironmentMetadata.name} pmUID:${pmEnvironmentMetadata.uid}' pulled from your Postman account into pmac.`,
     )
   }
 }

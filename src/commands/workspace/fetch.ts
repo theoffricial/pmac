@@ -1,8 +1,10 @@
 import { Command } from '@oclif/core'
 
-import { WorkspaceGetAllLocalAction, WorkspacePullAction } from '../../postman/actions'
+import { PMACWorkspaceGetAllAction, PMWorkspaceFetchAction, PMWorkspacePullToPMACAction } from '../../postman/actions'
 import { postmanApiInstance } from '../../postman/api'
-import { PmacConfigurationManager } from '../../file-system'
+import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
+import { PostmanWorkspace } from '../../postman/api/types'
+import { PMACWorkspace } from '../../file-system/types'
 
 export default class WorkspaceFetchPulled extends Command {
   static description = 'Fetches all pulled workspaces up-to-date.'
@@ -15,25 +17,28 @@ export default class WorkspaceFetchPulled extends Command {
   async run(): Promise<void> {
     await this.parse(WorkspaceFetchPulled)
 
-    const config = new PmacConfigurationManager()
-    const { localWorkspaces } = await new WorkspaceGetAllLocalAction(
-      config,
-    ).run()
+    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(fsWorkspaceManager).run()
 
-    const promises = []
-    for (const localWorkspace of localWorkspaces) {
-      const pmacName = config.workspaceNameConvention(localWorkspace.name, localWorkspace.id)
+    const promises: Promise<PostmanWorkspace>[] = []
+    for (const pmacWorkspace of pmacWorkspaces) {
+      if (pmacWorkspace.pmID) {
+        promises.push(new PMWorkspaceFetchAction(postmanApiInstance, pmacWorkspace.pmID).run())
+      }
+      // console.log(
+      //   `Local workspace ${pmacWorkspace.name} (${pmacWorkspace.type}) fetch starting...`,
+      // )
+    }
 
-      console.log(
-        `Local workspace ${pmacName} (${localWorkspace.type}) fetch starting...`,
-      )
-      promises.push(
-        new WorkspacePullAction(config, postmanApiInstance, localWorkspace).run(),
+    const pmWorkspaces = await Promise.all(promises)
+    const pmacPromises: Promise<PMACWorkspace>[] = []
+    for (const pmWorkspace of pmWorkspaces) {
+      pmacPromises.push(
+        new PMWorkspacePullToPMACAction(fsWorkspaceManager, fsWorkspaceResourceManager, postmanApiInstance, pmWorkspace).run(),
       )
     }
 
-    await Promise.all(promises)
+    await Promise.all(pmacPromises)
 
-    console.log('All workspaces updated.')
+    // console.log('All workspaces updated.')
   }
 }
