@@ -32,8 +32,8 @@ USAGE
   $ pmac environment delete [-r] [-l]
 
 FLAGS
-  -l, --local-only   Removes environment only from .pmac, keeps workspace in your PM account (remote)
-  -r, --remote-only  Removes environment only from your PM account, keeps workspace in .pmac (repository)
+  -l, --pmac-only  Removes environment only from .pmac, keeps workspace in your PM account (remote)
+  -r, --pm-only    Removes environment only from your PM account, keeps workspace in .pmac (repository)
 
 DESCRIPTION
   Deletes PM environment. default: Deletes from both .pmac (repository), and PM account (remote).

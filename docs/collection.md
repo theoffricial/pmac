@@ -40,8 +40,8 @@ USAGE
   $ pmac collection delete [-r] [-l]
 
 FLAGS
-  -l, --local-only   Removes collection only from .pmac, keeps workspace in your PM account (remote)
-  -r, --remote-only  Removes collection only from your PM account, keeps workspace in .pmac (repository)
+  -l, --pmac-only  Removes collection only from .pmac, keeps workspace in your PM account (remote)
+  -r, --pm-only    Removes collection only from your PM account, keeps workspace in .pmac (repository)
 
 DESCRIPTION
   Deletes PM collection. default: Deletes from both .pmac (repository), and PM account (remote).

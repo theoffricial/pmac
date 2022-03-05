@@ -28,7 +28,7 @@ EXAMPLES
   hello friend from oclif! (./src/commands/hello/index.ts)
 ```
 
-_See code: [dist/src/commands/hello/index.ts](https://github.com/postman-as-code/pmac/blob/v0.1.2/dist/src/commands/hello/index.ts)_
+_See code: [dist/src/commands/hello/index.ts](https://github.com/postman-as-code/pmac/blob/v1.0.0/dist/src/commands/hello/index.ts)_
 
 ## `pmac hello world`
 
