@@ -2,7 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "module": "commonjs",
-    "outDir": "dist",
+    "outDir": "dist/src",
     "target": "es2019",
     "strict": true,
     "esModuleInterop": true,
@@ -14,7 +14,6 @@
     ],
   },
   "include": [
-    "src",
-    "package.json"
+    "src"
   ]
 }

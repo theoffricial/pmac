@@ -10,7 +10,9 @@
 pmac.code-workspace
 
 # code
-/src
+dist/
+!dist/src/**
+!dist/package.json
 /test
 *.openpi.yml
 tsconfig*

@@ -2,13 +2,13 @@
 import path from 'path'
 
 import { WorkspaceType } from '../postman/api/types/workspace.types'
-import packageJson from '../../package.json'
+// import packageJson from '../../package.json'
 
 // See folder tree: https://tree.nathanfriend.io/?s=(%27optiFs!(%27fancyE~fullPath!false~trailingSlashE~rootDotE)~N(%27N%27.pmOC3s0persFal0J3G63-L23%20rawU63-K2pmOHo%20pm%20K%20forHrOking69s6J948s6J84mFitor76mock70V0teamCQ0Q2user%22I5U%2C%20such%20aIapi-key0Q-K2A%20general%20Kping%20ofHhe%20PM%20Ocount%27)~versiF!%271%27)*%20%200C*2R%20%23%203workspOe4GR6V65private60**7I%7BTBD%7D8envirFment9collectiFC%5Cn*E!trueFonG-name%5DH%20tIs%20J*%5BKmapLdataNsource!OacQ__5R.jsFU%20LV*...%01VURQONLKJIHGFEC987654320*
 
 // top-level
-const PKG_NAME = packageJson.name
-const PKG_VERSION = packageJson.version
+const PKG_NAME = 'pmac'
+// const PKG_VERSION = ''
 const WORKING_DIR = path.resolve('.')
 const MAIN_DIR_NAME = `.${PKG_NAME}`
 const MAIN_DIR_PATH = `${WORKING_DIR}/${MAIN_DIR_NAME}`
@@ -36,7 +36,7 @@ const WORKSPACE_DATA_FILE_NAME = `${PKG_NAME}-workspace.json`
 
 export const PMAC_FILE_SYS = {
   PKG_NAME,
-  PKG_VERSION,
+  // PKG_VERSION,
   WORKING_DIR,
   MAIN_DIR: {
     name: MAIN_DIR_NAME,
