@@ -3,7 +3,7 @@ import { Command } from '@oclif/core'
 import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
-import { EnvironmentChooseAction, PMACEnvironmentGetAllAction, EnvironmentGetMetadataAction, PMACWorkspaceChooseAction, EnvironmentPushAction } from '../../postman/actions'
+import { EnvironmentChooseAction, PMACEnvironmentGetAllAction, EnvironmentGetMetadataAction, PMACWorkspaceChooseAction, EnvironmentPushAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
 
 export default class EnvironmentPush extends Command {
   static description = 'Pushes (Fetches) environment updates to your PM account (remote) from your .pmac (repository).'
@@ -26,7 +26,9 @@ export default class EnvironmentPush extends Command {
 
   async run(): Promise<void> {
     await this.parse(EnvironmentPush)
-    const pmacWorkspaces = await fsWorkspaceManager.getAllPMACWorkspaces()
+    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(
+      fsWorkspaceManager,
+    ).run()
 
     const chosenPMACWorkspace = await new PMACWorkspaceChooseAction(
       inquirer,

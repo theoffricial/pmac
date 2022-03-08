@@ -7,6 +7,8 @@ import newman from 'newman'
 import { collectionPathValidator, environmentPathValidator } from '../../validators'
 import { PostmanEnvironment } from '../../postman/api/types'
 import { PostmanCollection } from '../../postman/api/types/collection.types'
+import * as runHelpers from '../../commands-helpers/collection/run.helper'
+import { PMAC_FILE_SYS } from '../../file-system/fs-pmac.constants'
 
 enum RUN_FLAG_GROUP {
   FUNDAMENTALS = 'fundamentals',
@@ -70,12 +72,22 @@ export default class CollectionRun extends Command {
       key=value format (default: [])`,
       helpGroup: RUN_FLAG_GROUP.INLINE_ENVIRONMENT_VARIABLES,
     }),
-    'env-var': Flags.string({
-      helpValue: '<value>',
+    // newman originally set this to 'string'
+    'env-var': Flags.boolean({
+      // helpValue: '<value>',
+      // description: `Allows the specification of environment
+      // variables via the command line, in a
+      // key=value format (default: [])`,
       description: `Allows the specification of environment
-      variables via the command line, in a
-      key=value format (default: [])`,
-      helpGroup: RUN_FLAG_GROUP.INLINE_ENVIRONMENT_VARIABLES,
+      variables via .env file, watching for "${PMAC_FILE_SYS.PMAC_ENV_VARS.TEXT_ENV_VAR_PREFIX}" environment variables, 
+      cut its prefix and set them as camelcase.
+      Default takes ".env", if you wish to customize it, use "env-var-path" flag.`,
+      helpGroup: RUN_FLAG_GROUP.FUNDAMENTALS,
+    }),
+    'env-var-path': Flags.string({
+      description: 'A custom relative path to your .env file',
+      helpGroup: RUN_FLAG_GROUP.FUNDAMENTALS,
+      helpValue: '<my/custom/dotenv/path/.env',
     }),
     'export-environment': Flags.string({
       helpValue: '<path>',
@@ -491,10 +503,14 @@ export default class CollectionRun extends Command {
       }
     }
 
+    if (flags['env-var']) {
+      runHelpers.configDotEnv(flags['env-var-path'])
+    }
+
     newman.run({
       collection: flags.collection || collectionJson,
       environment: flags.environment || environmentJson || '',
-      envVar: flags['env-var'],
+      envVar: flags['env-var'] && runHelpers.buildNewmanEnvVars(),
       globals: flags.globals,
       globalVar: flags['global-var'],
       iterationData: flags['iteration-data'],

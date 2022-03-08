@@ -19,3 +19,6 @@ oclif.manifest.json
 /.pmac/workspaces/team
 /.pmac/__private
 /.pmac
+
+# config
+*.env*

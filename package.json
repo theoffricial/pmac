@@ -1,7 +1,7 @@
 {
   "name": "pmac",
   "description": "Manages your team's Postman as code.",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "author": "unicop",
   "license": "MIT",
   "main": "dist/src/index.js",
@@ -30,6 +30,8 @@
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.0.1",
     "axios": "^0.25.0",
+    "camelcase": "^6.3.0",
+    "dotenv": "^16.0.0",
     "glob": "^7.2.0",
     "inquirer": "^8.2.0",
     "listr": "^0.14.3",
