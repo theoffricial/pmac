@@ -7,6 +7,7 @@ Creates a new PM environment.
 * [`pmac environment delete`](#pmac-environment-delete)
 * [`pmac environment pull`](#pmac-environment-pull)
 * [`pmac environment push`](#pmac-environment-push)
+* [`pmac environment update`](#pmac-environment-update)
 
 ## `pmac environment create`
 
@@ -14,7 +15,11 @@ Creates a new PM environment.
 
 ```
 USAGE
-  $ pmac environment create
+  $ pmac environment create -e <value>
+
+FLAGS
+  -e, --dotEnvPath=my/custom/path/to/.env  (required) Specify a relative path to a .env file, to copy values to, [Do not
+                                           take .env as default!]
 
 DESCRIPTION
   Creates a new PM environment.
@@ -40,6 +45,10 @@ DESCRIPTION
 
 EXAMPLES
   $pmac environment delete
+
+  $pmac environment delete --pm-only
+
+  $pmac environment delete --pmac-only
 ```
 
 ## `pmac environment pull`
@@ -70,4 +79,23 @@ DESCRIPTION
 
 EXAMPLES
   $pmac environment push
+```
+
+## `pmac environment update`
+
+Creates a new PM environment.
+
+```
+USAGE
+  $ pmac environment update -e <value>
+
+FLAGS
+  -e, --dotEnvPath=my/custom/path/to/.env  (required) Specify a relative path to a .env file, to copy values to, [Do not
+                                           take .env as default!]
+
+DESCRIPTION
+  Creates a new PM environment.
+
+EXAMPLES
+  $pmac environment create
 ```
