@@ -31,16 +31,21 @@
   </a>
  </p>
 
-## Disclosure
+## Disclosure 🙏
 
 I just published this package, and it can be improved and it will.
 So if you any suggestions or had a bad experience, I would be happy to hear - you can contact by using the [Discord](https://discord.gg/tPD99Z3A) channel, open an issue or contact with me via [LinkedIn](https://www.linkedin.com/in/itsofriperetz/).
+
+### Roadmap 🗺 🧭
+
+Transparency is an important key that creates trust to make the decision easier to use `pmac` as tool.
+See `pmac` [roadmap](https://github.com/orgs/postman-as-code/projects/1).
 
 ## Description
 
 pmac stands for "Postman as code", it is a CLI tool and a framework for building efficient and scalable APIs, by specifying your API following the OpenAPI standard that is giving you a set of tools out-of-the-box by itself, including validation based on the specification. Then, after having your specification pmac auto-generated your specification to postman collection, and manages the collection and other Postman entities as code in your repository while helping you to push changes from repository to Postman account, pull changes into the repository, and gives you the ability to manage Postman's entities automatically. pmac uses modern Javascript, is build with TypeScript, and centralize UX for easy and convenient usage.
 
-## Philosophy
+## Philosophy 🧐
 
 pmac built with the recognition of the advantage of using standards and widely known existing products to fit for many different use-cases scenarios, and also to be easy to migrate to.
 
@@ -54,11 +59,11 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
 * Validation by using the specification
 * Verification by auto-generating & managing API tests with postman as code in your repository
 
-## Change log
+## Change log 🐾
 
 View the [changelog](./CHANGELOG.md).
 
-## Features
+## Features 🦚
 
 * Integrated with [Postman API](https://www.postman.com/), using an API key, you pass to pmac
 * Priortizing user experience using
@@ -86,8 +91,10 @@ View the [changelog](./CHANGELOG.md).
 
 ## Getting Started
 
-* A good start will be to have a basic openapi specification for your API
-* To check out the [commands](./docs), use `help` in the CLI or click [here](./docs)
+* use `pmac help` and `pmac <command> --help` to see a guide for all commands.
+* `pmac` generates a local Postman workspace on the project level, to reflect a workspace or one of its resources you should `push` it.
+* Create an [open-api]() v3 specification or your API, to use `pmac collection create`
+* use a `.env` file to maintain automatically postman environments
 * pmac official docs (Soon...)
 
 ## License
