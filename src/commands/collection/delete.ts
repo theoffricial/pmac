@@ -3,7 +3,7 @@ import { Command, Flags } from '@oclif/core'
 import inquirer from 'inquirer'
 import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 import { postmanApiInstance } from '../../postman/api'
-import { PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction, CollectionChooseAction } from '../../postman/actions'
+import { PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction, CollectionChooseAction, CollectionDeleteAction } from '../../postman/actions'
 import { PMACCollectionDeleteAction } from '../../postman/actions/pmac-collection-delete.action'
 import { PMCollectionDeleteAction } from '../../postman/actions/pm-collection-delete.action'
 import { WorkspaceResource } from '../../postman/api/types'
@@ -38,75 +38,58 @@ export default class CollectionDelete extends Command {
       WorkspaceResource.Collection,
       '*')
 
-    const existingCollections = new Set(pmacWorkspace.collections.map(c => c.pmID))
-
-    const filtered = pmacCollections.filter(pmC =>
-      existingCollections.has(pmC.info._postman_id),
-    )
-
-    const pmacCollection = await new CollectionChooseAction(inquirer, filtered).run()
+    const pmacCollection = await new CollectionChooseAction(inquirer, pmacCollections).run()
 
     const pmacMap = pmacWorkspace.collections.find(pmacC => pmacC.pmID === pmacCollection.info._postman_id)
 
     if (!pmacMap) {
-      this.error('pmacID not found for the requested collection')
+      this.error('pmacID not found for the requested collection', { code: '0' })
     }
 
-    // if (!flags['pmac-only']) {
+    if (flags['pmac-only']) {
+      await new PMACCollectionDeleteAction(fsWorkspaceResourceManager, {
+        name: pmacCollection.info.name,
+        type: WorkspaceResource.Collection,
+        pmacID: pmacMap.pmacID,
+        workspaceName: pmacWorkspace.name,
+        workspaceType: pmacWorkspace.type,
+        workspacePMACId: pmacWorkspace.pmacID,
+      }).run()
+      this.log(
+        `Collection ${pmacCollection.info.name} deleted from pmac.`,
+      )
+      return
+    }
+
     if (!pmacMap.pmUID) {
-      this.error('Collection pmUID not found')
+      this.error('Collection pmUID not found, you can check your pmac-workspace.json')
     }
 
-    await new PMCollectionDeleteAction(
+    if (flags['pm-only']) {
+      await new PMCollectionDeleteAction(
+        fsWorkspaceResourceManager,
+        postmanApiInstance,
+        pmacWorkspace,
+        {
+          id: pmacCollection.info._postman_id,
+          name: pmacCollection.info.name,
+          uid: pmacMap.pmUID || '',
+        }).run()
+
+      this.log(
+        `Collection ${pmacCollection.info.name} deleted from your Postman account.`,
+      )
+      return
+    }
+
+    await new CollectionDeleteAction(
       fsWorkspaceResourceManager,
       postmanApiInstance,
       pmacWorkspace,
-      {
-        id: pmacCollection.info._postman_id,
-        name: pmacCollection.info.name,
-        uid: pmacMap.pmUID,
-      }).run()
-
-    this.log(
-      `Collection ${pmacCollection.info.name} deleted from your PM account.`,
-    )
-    // }
-    // if (!flags['pm-only']) {
-    await new PMACCollectionDeleteAction({
-      name: pmacCollection.info.name,
-      type: WorkspaceResource.Collection,
-      pmacID: pmacMap.pmacID,
-      workspaceName: pmacWorkspace.name,
-      workspaceType: pmacWorkspace.type,
-      workspacePMACId: pmacWorkspace.pmacID,
-    }).run()
-
+      pmacCollection,
+    ).run()
     this.log(
       `Collection ${pmacCollection.info.name} pmacID:${pmacMap.pmacID} deleted from .pmac.`,
     )
-    // }
-
-    // const pmCollectionsMetadata = await new PMCollectionFetchAllAction(
-    //   postmanApiInstance,
-    //   pmacWorkspace,
-    // ).run()
-
-    // const pmCollectionMetadata = await new PMCollectionMetadataChooseAction(
-    //   inquirer,
-    //   pmCollectionsMetadata,
-    // ).run()
-
-    // else {
-    //   await new CollectionDeleteAction(
-    //     config,
-    //     postmanApiInstance,
-    //     pmacWorkspace,
-    //     chosenCollection.uid,
-    //   ).run()
-
-    //   this.log(
-    //     `Collection ${pmacCollectionName} deleted from both your PM account (remote) and .pmac (repository).`,
-    //   )
-    // }
   }
 }

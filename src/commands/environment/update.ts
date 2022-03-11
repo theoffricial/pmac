@@ -3,9 +3,9 @@ import { Command, Flags } from '@oclif/core'
 import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 
 import inquirer from 'inquirer'
-import { EnterNameAction, PMACEnvironmentCreateAction, PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
-import { PostmanEnvironment, PostmanEnvironmentValueType } from '../../postman/api/types'
+import { EnvironmentChooseAction, PMACEnvironmentGetAllAction, PMACEnvironmentUpdateAction, PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
 import { buildPMACEnvironmentValues } from '../../commands-helpers/environment/environment-commands-shared.helper'
+import { PostmanEnvironment } from '../../postman/api/types'
 
 export default class EnvironmentCreate extends Command {
   static description = 'Creates a new PM environment.'
@@ -22,6 +22,11 @@ export default class EnvironmentCreate extends Command {
       description: 'Specify a relative path to a .env file, to copy values to, [Do not take .env as default!]',
       required: true,
     }),
+    // overwrite: Flags.boolean({
+    //   default: true,
+    //   char: 'o',
+    //   required: false,
+    // }),
   }
 
   async run(): Promise<void> {
@@ -36,28 +41,28 @@ export default class EnvironmentCreate extends Command {
       pmacWorkspaces,
     ).run()
 
-    const { chosenName } = await new EnterNameAction(
-      inquirer,
-      'Enter a name for the new PM environment',
+    const pmacEnvironments = await new PMACEnvironmentGetAllAction(
+      fsWorkspaceResourceManager,
+      pmacWorkspace,
     ).run()
 
-    const newPMEnvironment: Pick<PostmanEnvironment, 'name' | 'values'> = {
-      name: chosenName,
-      values: [
-        {
-          enabled: true,
-          key: 'exampleVariable',
-          value: '42',
-          type: PostmanEnvironmentValueType.Text,
-        },
-      ],
+    if (pmacEnvironments.length === 0) {
+      this.error('No environments found', { exit: 1 })
     }
 
-    if (flags.dotEnvPath) {
-      newPMEnvironment.values = buildPMACEnvironmentValues(flags.dotEnvPath)
+    const pmacEnvironment = await new EnvironmentChooseAction(
+      inquirer,
+      pmacEnvironments,
+    ).run()
+
+    const newPMEnvironment: PostmanEnvironment = {
+      ...pmacEnvironment,
+      values: buildPMACEnvironmentValues(flags.dotEnvPath),
     }
 
-    await new PMACEnvironmentCreateAction(
+    // TODO: support without overwrite
+
+    await new PMACEnvironmentUpdateAction(
       fsWorkspaceManager,
       fsWorkspaceResourceManager,
       pmacWorkspace,

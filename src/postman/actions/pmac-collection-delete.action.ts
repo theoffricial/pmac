@@ -1,11 +1,14 @@
 
-import { fsWorkspaceResourceManager } from '../../file-system'
+import { TfsWorkspaceResourceManager } from '../../file-system'
 import { IPMACAction } from './action.interface'
 import { PMACWorkspaceResourceIDWithWID } from '../../file-system/types'
 
 export class PMACCollectionDeleteAction implements IPMACAction {
-  constructor(private readonly wrid: PMACWorkspaceResourceIDWithWID) {}
+  constructor(
+    private readonly fsWorkspaceResourceManager: TfsWorkspaceResourceManager,
+    private readonly wrid: PMACWorkspaceResourceIDWithWID) {}
+
   async run() {
-    await fsWorkspaceResourceManager.deletePMACWorkspaceResourceByWrid(this.wrid)
+    await this.fsWorkspaceResourceManager.deletePMACWorkspaceResourceByWrid(this.wrid)
   }
 }

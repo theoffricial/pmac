@@ -54,6 +54,10 @@ Having this understanding in mind, pmac aims to be the "glue" of 3 domains any A
 * Validation by using the specification
 * Verification by auto-generating & managing API tests with postman as code in your repository
 
+## Change log
+
+View the [changelog](./CHANGELOG.md).
+
 ## Features
 
 * Integrated with [Postman API](https://www.postman.com/), using an API key, you pass to pmac

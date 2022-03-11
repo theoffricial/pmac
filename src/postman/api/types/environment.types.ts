@@ -6,12 +6,7 @@ export interface PostmanEnvironment {
     createdAt: string;
     /** UTC format */
     updatedAt: string;
-    values: {
-      key: string;
-      value: string | number;
-      type: 'text' | 'secret'
-      enabled: boolean;
-    }[];
+    values: PostmanEnvironmentValue[];
     isPublic: boolean;
   }
 
@@ -28,3 +23,16 @@ export type PostmanEnvironmentMinMetadata = Omit<
   >;
 
 export type PMEnvironmentId = PostmanEnvironmentMetadata
+
+export interface PostmanEnvironmentValue {
+  key: string;
+  value: string | number;
+  type: PostmanEnvironmentValueType;
+  enabled: boolean;
+}
+
+export enum PostmanEnvironmentValueType {
+  Text = 'text',
+  Secret = 'secret'
+}
+

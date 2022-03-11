@@ -9,3 +9,9 @@ export type TfsWorkspaceResourceManager = typeof fsWorkspaceResourceManager
 export { fsMainManager, fsWorkspaceManager, fsWorkspaceResourceManager, fsPrivateManager }
 
 export * as PMACMap from './fs-pmac-map-utils'
+
+export * from './fs-pmac.constants'
+
+import * as pmacDotEnv from './dotenv'
+
+export { pmacDotEnv }

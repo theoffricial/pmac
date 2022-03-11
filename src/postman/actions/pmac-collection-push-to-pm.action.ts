@@ -30,7 +30,7 @@ export class CollectionPushAction implements IPMACAction<PostmanCollectionMetada
     let pmCollectionMetadata: PostmanCollectionMetadata
 
     try {
-      console.log(`Trying to push collection ${this.pmCollection.info.name} by update..`)
+      console.log(`Trying to push collection '${this.pmCollection.info.name}' with update action..`)
       const { data: { collection } } = await this.pmApi.collections.updateCollection(
         this.collectionUid,
         {
@@ -42,7 +42,7 @@ export class CollectionPushAction implements IPMACAction<PostmanCollectionMetada
       )
       pmCollectionMetadata = collection
     } catch {
-      console.log(`Trying to push collection ${this.pmCollection.info.name} by create..`)
+      console.log(`Trying to push collection ${this.pmCollection.info.name} with create action..`)
       const collection = await new PMCollectionCreateAction(
         this.fsWorkspaceManager,
         this.fsWorkspaceResourceManager,

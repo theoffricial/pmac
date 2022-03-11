@@ -86,11 +86,11 @@ Using `newman run` behind-the-scenes to initiate a Postman Collection run from a
 
 ```
 USAGE
-  $ pmac collection run [-g <value>] [-n <value>] [-d <value>] [--folder <value>] [--global-var <value>] [--env-var
-    <value>] [--export-environment <value>] [--export-globals <value>] [--export-collection <value>] [--postman-api-key
-    <value>] [--bail <value>] [--ignore-redirects] [-x] [--silent] [--disable-unicode] [--color auto|on|off]
-    [--delay-request <value>] [--timeout <value>] [--timeout-request <value>] [--timeout-script <value>] [--working-dir
-    <value>] [--no-insecure-file-read] [-k] [--ssl-client-cert-list <value>] [--ssl-client-cert <value>]
+  $ pmac collection run [-g <value>] [-n <value>] [-d <value>] [--folder <value>] [--global-var <value>] [--env-var]
+    [--env-var-path <value>] [--export-environment <value>] [--export-globals <value>] [--export-collection <value>]
+    [--postman-api-key <value>] [--bail <value>] [--ignore-redirects] [-x] [--silent] [--disable-unicode] [--color
+    auto|on|off] [--delay-request <value>] [--timeout <value>] [--timeout-request <value>] [--timeout-script <value>]
+    [--working-dir <value>] [--no-insecure-file-read] [-k] [--ssl-client-cert-list <value>] [--ssl-client-cert <value>]
     [--ssl-client-key <value>] [--ssl-client-passphrase <value>] [--ssl-extra-ca-certs <value>] [--cookie-jar <value>]
     [--export-cookie-jar <value>] [--verbose] [--skip-environment] [-e <value>] [-c <value>] [-r
     cli|html|csv|junit|htmlextra] [--no-summary] [--reporter-no-summary] [--reporter-cli-no-summary]
@@ -175,13 +175,13 @@ TIMES FLAGS
   --timeout-script=[n]   Specify a timeout for scripts
                          (milliseconds) (default: 0)
 
-INILINE ENVIRONMENT VARIABLES FLAGS
-  --env-var=<value>     Allows the specification of environment
-                        variables via the command line, in a
-                        key=value format (default: [])
-  --global-var=<value>  Allows the specification of global
-                        variables via the command line, in a
-                        key=value format (default: [])
+FUNDAMENTALS FLAGS
+  --env-var                                   Allows the specification of environment
+                                              variables via .env file, watching for "PMAC_" environment variables,
+                                              cut its prefix and set them as camelcase.
+                                              Default takes ".env", if you wish to customize it, use "env-var-path"
+                                              flag.
+  --env-var-path=<my/custom/dotenv/path/.env  A custom relative path to your .env file
 
 EXPORT FLAGS
   --export-collection=<path>   Exports the executed collection to a
@@ -190,6 +190,11 @@ EXPORT FLAGS
                                after completing the run
   --export-globals=<path>      Exports the final globals to a file
                                after completing the run
+
+INILINE ENVIRONMENT VARIABLES FLAGS
+  --global-var=<value>  Allows the specification of global
+                        variables via the command line, in a
+                        key=value format (default: [])
 
 CLI REPORTER FLAGS
   --no-summary                          The statistical summary table is not shown.

@@ -3,9 +3,8 @@ import { Command } from '@oclif/core'
 import inquirer from 'inquirer'
 import { postmanApiInstance } from '../../postman/api'
 import { CollectionChooseAction, CollectionPushAction, PMACCollectionGetAllAction, PMACWorkspaceChooseAction } from '../../postman/actions'
-import { PMACCollectionGetPMACMapAction } from '../../postman/actions/collection-get-metadata.action'
+import { PMACCollectionGetPMACMapAction } from '../../postman/actions/pmac-collection-get-map.action'
 import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
-import { WorkspaceResource } from '../../postman/api/types'
 
 export default class CollectionPush extends Command {
   static description = 'Pulls (Fetches) new updates about an existing collection on your .pmac (repository).'

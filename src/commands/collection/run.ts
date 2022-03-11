@@ -1,9 +1,9 @@
 import { Command, Flags } from '@oclif/core'
+import newman from 'newman'
 import inquirer from 'inquirer'
-import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
+import { fsWorkspaceManager, fsWorkspaceResourceManager, pmacDotEnv } from '../../file-system'
 import { CollectionChooseAction, PMACCollectionGetAllAction, EnvironmentChooseAction, PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
 import { PMACEnvironmentGetAllAction } from '../../postman/actions/pmac-environment-get-all.action'
-import newman from 'newman'
 import { collectionPathValidator, environmentPathValidator } from '../../validators'
 import { PostmanEnvironment } from '../../postman/api/types'
 import { PostmanCollection } from '../../postman/api/types/collection.types'
@@ -503,14 +503,10 @@ export default class CollectionRun extends Command {
       }
     }
 
-    if (flags['env-var']) {
-      runHelpers.configDotEnv(flags['env-var-path'])
-    }
-
     newman.run({
       collection: flags.collection || collectionJson,
       environment: flags.environment || environmentJson || '',
-      envVar: flags['env-var'] && runHelpers.buildNewmanEnvVars(),
+      envVar: flags['env-var'] && runHelpers.buildNewmanEnvVars(flags['env-var-path']),
       globals: flags.globals,
       globalVar: flags['global-var'],
       iterationData: flags['iteration-data'],

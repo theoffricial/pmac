@@ -16,14 +16,20 @@ export class EnvironmentPushAction implements IPMACAction<PostmanEnvironmentMinM
 
   async run() {
     if (!this.pmacWorkspace.pmID) {
-      throw new Error(`pmac workspace pmID not found, please push workspace pmac: ${this.pmacWorkspace.pmacID} first.`)
+      throw new Error(`pmac workspace pmID not found, please push workspace pmac: ${this.pmacWorkspace.pmacID} to Postman first.`)
     }
 
     let pmEnvironmentMetadata: PostmanEnvironmentMinMetadata
 
     try {
-      pmEnvironmentMetadata = await new PMEnvironmentUpdateAction(this.pmApi, this.pmacWorkspace, this.pmEnvironment).run()
+      console.log(`Trying to push environment '${this.pmEnvironment.name}' with update action..`)
+
+      pmEnvironmentMetadata = await new PMEnvironmentUpdateAction(
+        this.pmApi,
+        this.pmacWorkspace,
+        this.pmEnvironment).run()
     } catch {
+      console.log(`Trying to push environment '${this.pmEnvironment.name}' with create action..`)
       pmEnvironmentMetadata = await new PMEnvironmentCreateAction(
         this.fsWorkspaceManager,
         this.fsWorkspaceResourceManager,

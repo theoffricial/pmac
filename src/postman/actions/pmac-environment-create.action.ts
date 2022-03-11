@@ -9,7 +9,6 @@ implements IPMACAction<void> {
   constructor(
     private readonly fsWorkspaceManager: TfsWorkspaceManager,
     private readonly fsWorkspaceResourceManager: TfsWorkspaceResourceManager,
-    private readonly postmanApi: PostmanAPI,
     private readonly pmacWorkspace: PMACWorkspace,
     private readonly newPmEnvironment: Pick<PostmanEnvironment, 'name' | 'values'>,
   ) {}
@@ -22,6 +21,7 @@ implements IPMACAction<void> {
     const pmacID = PMACMap.generatePMACuuid()
     const pmIDTmp = PMACMap.generateTemporaryPMACuuid()
 
+    const createdAt = new Date().toISOString()
     await this.fsWorkspaceResourceManager.writeWorkspaceResourceDataJson<WorkspaceResource.Environment>({
       name: this.newPmEnvironment.name,
       type: WorkspaceResource.Environment,
@@ -30,50 +30,20 @@ implements IPMACAction<void> {
       workspaceName: this.pmacWorkspace.name,
       workspacePMACId: this.pmacWorkspace.pmacID,
       workspaceType: this.pmacWorkspace.type,
-      pmID: '',
-      pmUID: '',
+      pmID: 'not-published-to-pm-yet',
+      pmUID: 'not-published-to-pm-yet',
     }, {
       values: this.newPmEnvironment.values,
       name: this.newPmEnvironment.name,
       // tmp - for easy matching before pushing to PM
       id: pmIDTmp,
-      createdAt: '',
+      createdAt,
       isPublic: false,
-      owner: '',
-      updatedAt: '',
+      owner: 'pmac-not-published-to-pm-yet',
+      updatedAt: createdAt,
     })
 
     this.pmacWorkspace.environments.push({ pmacID, pmID: '', pmUID: '', pmIDTmp })
     await this.fsWorkspaceManager.writeWorkspaceDataJson(this.pmacWorkspace)
-
-    // try {
-    //   const {
-    //     data: { environment: environmentMetadata },
-    //   } = await this.postmanApi.environments.createEnvironment(
-    //     this.pmacWorkspace.pmID || '',
-    //     {
-    //       name: this.newPmEnvironment.name,
-    //       values: this.newPmEnvironment.values,
-    //     },
-    //   )
-    //   bla = environmentMetadata
-    // } catch (error) {
-    //   console.error(error)
-    // }
-
-    // // Updating workspace data
-    // await new WorkspacePullAfterResourceUpdatedAction(
-    //   this.config,
-    //   this.postmanApi,
-    //   this.pmacWorkspace.id,
-    // ).run()
-
-    // Pull collection after updating
-    // const pmEnvironment = await new PMEnvironmentPullToPMACAction(
-    //   this.fsWorkspaceResourceManager,
-    //   this.postmanApi,
-    //   this.pmacWorkspace,
-    //   bla.uid,
-    // ).run()
   }
 }
