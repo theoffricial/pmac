@@ -20,7 +20,10 @@
     <img src="https://img.shields.io/npm/l/pmac.svg" alt="License" />
   </a>
   <a href="https://codecov.io/gh/postman-as-code/pmac">
-    <img src="https://codecov.io/gh/postman-as-code/pmac/branch/main/graph/badge.svg?token=VQATYZJCCN"/>
+    <img src="https://codecov.io/gh/postman-as-code/pmac/branch/main/graph/badge.svg?token=VQATYZJCCN" alt="CodeCov"/>
+  </a>
+  <a href="https://github.com/postman-as-code/pmac">
+    <img src="https://img.shields.io/github/stars/postman-as-code/pmac?color=%23d3ab18&label=github%20stars" alt="GitHub Stars">
   </a>
   <br/>
   <a href="https://github.com/postman-as-code/pmac" target="_blank">
