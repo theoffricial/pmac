@@ -91,11 +91,29 @@ View the [changelog](./CHANGELOG.md).
 
 ## Getting Started
 
-* use `pmac help` and `pmac <command> --help` to see a guide for all commands.
-* `pmac` generates a local Postman workspace on the project level, to reflect a workspace or one of its resources you should `push` it.
-* Create an [open-api]() v3 specification or your API, to use `pmac collection create`
-* use a `.env` file to maintain automatically postman environments
-* pmac official docs (Soon...)
+1. Installation, use `npm` or `yarn`
+
+```
+npm i -g pmac // or yarn global add pmac
+```
+1. Generate a Postman api key
+    1. To create `pull` and `push` actions
+
+1. Commands guide
+    1. use `pmac help` and `pmac <command> --help` to see a guide for all commands.
+    1. Also, you can use the generated commands docs [here](./docs/)
+
+1. Write your API openapi specification
+    1. Learn more about openapi with the official docs
+    2. Use the Swagger Editor
+
+1. How `pmac` manages its workpsaces
+    1. By decoupling `pmac` workspaces from `pm` workspace, which means they are different things!
+    1. Although the workspace resources, like `collection`, `environment`, etc., are currently similar.
+
+1. See the [`pmac` file tree](https://tree.nathanfriend.io/?s=(%27optiMs!(%27fancyL~fullPath!false~trailingSlashL~rootDotL)~N(%27N%27.J97sQpersMalR3WA68V4A485*KQteamR3WA68V4A485__GQ__GFuser%22HG%20data%20%7Be.g.%20aHapi-key%7D%27)~versiM!%271%27)*%20%200Q**2-name_((JID))%5D3J-7F7%20includeHJ%20map4envirMment5mMitorE0mockE96collectiM7workspace8U0K09%5Cn*A2.postman_C*%5BEH%7BTBD..%7DFU%20%23%20GprivateHs%20JpmacK*...L!trueMonNsource!Os0CQ9*RQC720U.jsMVK04OW06O6%01WVURQONMLKJHGFECA987654320*) to understand better how `pmac` works! 
+
+1. Use `pmac` official docs (very soon...)
 
 ## License
 
