@@ -34,3 +34,5 @@ export enum WorkspaceResource {
   Monitor = 'monitor',
   Mock = 'mock',
 }
+
+export const WorkspaceTypeValues = Object.values(WorkspaceType)

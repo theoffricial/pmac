@@ -36,13 +36,13 @@
 
 ## Disclosure 🙏
 
-I just published this package, and it can be improved and it will.
-So if you any suggestions or had a bad experience, I would be happy to hear - you can contact by using the [Discord](https://discord.gg/tPD99Z3A) channel, open an issue or contact with me via [LinkedIn](https://www.linkedin.com/in/itsofriperetz/).
+I just published this package, So I'm consistently working to improve it.
+So if you have any suggestions or had a bad experience, I would be happy to hear - you can contact by using the [Discord](https://discord.gg/tPD99Z3A) channel, or contact with me via [LinkedIn](https://www.linkedin.com/in/itsofriperetz/).
 
 ### Roadmap 🗺 🧭
 
-Transparency is an important key that creates trust to make the decision easier to use `pmac` as tool.
-See `pmac` [roadmap](https://github.com/orgs/postman-as-code/projects/1).
+Transparency is an important key, especially for open sources, to help with your decision making wether to use a lib or not.
+For this reason, I'm working on building a public [roadmap](https://github.com/orgs/postman-as-code/projects/1) for `pmac`.
 
 ## Description
 

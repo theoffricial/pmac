@@ -25,40 +25,6 @@ export class PMACWorkspaceCreateAction implements IPMACAction<PMACWorkspace> {
       },
     ])
 
-    // const { detectDuplication, userDecidedToRename } = await new WorkspaceNameDuplicationAction(
-    //   this.inquirer,
-    //   this.postmanApi,
-    //   this.config,
-    //   { name: newWorkspace.name, type: newWorkspace.type }).run()
-
-    // if (detectDuplication && userDecidedToRename) {
-    //   let duplicationCheck = true
-    //   while (duplicationCheck) {
-    //     // eslint-disable-next-line no-await-in-loop
-    //     const { newName } = await this.inquirer.prompt(
-    //       {
-    //         type: 'input',
-    //         message: 'Enter a different name for the new workspace',
-    //         name: 'newName',
-    //       })
-
-    //     // rename
-    //     newWorkspace.name = newName
-
-    //     const { detectDuplication, userDecidedToRename } =
-    //         // eslint-disable-next-line no-await-in-loop
-    //         await new WorkspaceNameDuplicationAction(
-    //           this.inquirer,
-    //           this.postmanApi,
-    //           this.config,
-    //           { name: newName, type: newWorkspace.type }).run()
-
-    //     if (!detectDuplication || !userDecidedToRename) {
-    //       duplicationCheck = false
-    //     }
-    //   }
-    // }
-
     const { description: userDescriptionInput } = await this.inquirer.prompt({
       type: 'input',
       message: 'Add description to the workspace [optional]',

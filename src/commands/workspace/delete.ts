@@ -2,7 +2,7 @@ import { Command, Flags } from '@oclif/core'
 
 import inquirer from 'inquirer'
 
-import { PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction, PMACWorkspaceCreateAction } from '../../postman/actions'
+import { PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
 import { postmanApiInstance } from '../../postman/api'
 import { fsWorkspaceManager } from '../../file-system'
 import { WorkspaceDeleteAction } from '../../postman/actions/workspace-delete.action'
