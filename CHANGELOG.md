@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.3.0
+
+- Refactor `init` and `workspace.create` commands to work with `Listr2`.
+- Add new `--name`, `--skip-description`, and `--type` flags for `workspace.create`.
+
 ## 1.2.1
 
 - Add reference to `pmac` public roadmap
