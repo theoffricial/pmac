@@ -16,10 +16,13 @@ Creates new PMAC collection
 
 ```
 USAGE
-  $ pmac workspace create [-k <value>]
+  $ pmac workspace create [-k <value>] [-n <value>] [-t personal|team] [-s]
 
 FLAGS
   -k, --api-key=<your PM api key>  Dynamic api key
+  -n, --name=<name>                Sets the workspace name without need for stdin question
+  -s, --skip-description           Skips questioning for workspace description and set it to an empty string.
+  -t, --type=<type>                Sets the workspace type without need for stdin question.
 
 DESCRIPTION
   Creates new PMAC collection

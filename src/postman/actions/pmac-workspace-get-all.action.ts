@@ -12,7 +12,6 @@ implements IPMACAction<PMACWorkspace[]> {
 
   async run() {
     const pmacWorkspaces = await this._fsWorkspaceManager.getAllPMACWorkspaces(this.type)
-
     return pmacWorkspaces
   }
 }

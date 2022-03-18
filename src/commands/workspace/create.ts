@@ -58,12 +58,12 @@ export default class WorkspaceCreate extends Command {
 
     const ctx = await mainTask.run()
 
-    if (!ctx.workspaceJson) {
+    if (!ctx.pmacWorkspace) {
       this.error('pmac cannot complete workspace create when no workspace json is defined.')
     }
 
     this.log(
-      `Workspace ${ctx.workspaceName} pmacID:${ctx.workspaceJson.pmacID} created successfully.`,
+      `Workspace ${ctx.workspaceName} pmacID:${ctx.pmacWorkspace.pmacID} created successfully.`,
     )
   }
 }

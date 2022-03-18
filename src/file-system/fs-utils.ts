@@ -2,8 +2,10 @@
 import { PathLike, WriteFileOptions } from 'fs'
 // eslint-disable-next-line unicorn/prefer-node-protocol
 import fs from 'fs/promises'
+// eslint-disable-next-line unicorn/prefer-node-protocol
+import path from 'path'
 
-export async function readJsonFile<T = any>(
+async function readJsonFile<T = any>(
   path: PathLike,
   options?:
       | BufferEncoding | {
@@ -15,7 +17,7 @@ export async function readJsonFile<T = any>(
   return JSON.parse(content) as T
 }
 
-export async function writeJsonFile<T = any>(
+async function writeJsonFile<T = any>(
   path: PathLike,
   data: T,
   options?: WriteFileOptions | undefined,
@@ -24,3 +26,12 @@ export async function writeJsonFile<T = any>(
   await fs.writeFile(path, stringifyContent, options || 'utf8')
 }
 
+function getRootDirRelativePath(abosultePath: string) {
+  return path.relative('.', abosultePath)
+}
+
+export const pmacFsUtils = {
+  readJsonFile,
+  writeJsonFile,
+  getRootDirRelativePath,
+}

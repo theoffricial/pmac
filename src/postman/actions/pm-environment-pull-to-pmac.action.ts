@@ -31,6 +31,7 @@ export class PMEnvironmentPullToPMACAction implements IPMACAction<PostmanEnviron
 
     const pmacResource = this.pmacWorkspace.environments?.find(c => c.pmUID === this.pmEnvironmentUid)
 
+    console.log(pmacResource)
     if (pmacResource) {
       // Check if resource already exists in pmac
       const existingWrid = await this.fsWorkspaceResourceManager.getPMACWridWithoutName({

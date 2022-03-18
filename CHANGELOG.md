@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.4.0
+
+- Create common tasks for workspaces
+- Make `pmac workspace delete` command to work with `Listr2`
+- Add a new flag `--workspace-path` for `pmac workspace delete`, for automation support, which can be use like this example: `pmac workspace delete -w ./.pmac/workspaces/personal/test-env_pmacf7367da5e7e34110aaeb956db8b7d777/pmac-workspace.json`.
+
 ## 1.3.0
 
 - Refactor `init` and `workspace.create` commands to work with `Listr2`.

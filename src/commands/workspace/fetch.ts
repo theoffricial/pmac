@@ -5,17 +5,34 @@ import { postmanApiInstance } from '../../postman/api'
 import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
 import { PostmanWorkspace } from '../../postman/api/types'
 import { PMACWorkspace } from '../../file-system/types'
+import { Listr, ListrTask } from 'listr2'
+import { PmacWorkspaceFetchCtx } from '../../commands-helpers/workspace/fetch.helper'
+import { workspaceSharedTasks } from '../../commands-helpers/shared/workspace-tasks'
 
-export default class WorkspaceFetchPulled extends Command {
+export default class WorkspaceFetch extends Command {
   static description = 'Fetches all pulled workspaces up-to-date.'
 
   static examples = [
-    `$pmac workspace fetch
-`,
+    'pmac workspace fetch',
   ]
 
   async run(): Promise<void> {
-    await this.parse(WorkspaceFetchPulled)
+    await this.parse(WorkspaceFetch)
+
+    // const subTasks: ListrTask<PmacWorkspaceFetchCtx>[] = [
+    //   workspaceSharedTasks.getAllPmacWorkspacesTask({}),
+    // ]
+
+    // const mainTask = new Listr<PmacWorkspaceFetchCtx>({
+    //   title: 'Fetching your Postman workspaces to pmac workspaces',
+    //   task: async (_ctx, task) => task.newListr(subTasks),
+    // },
+    // {
+    //   ctx: {},
+    //   rendererOptions: { showErrorMessage: false, collapse: false, showTimer: true },
+    // })
+
+    // const ctx = await mainTask.run()
 
     const pmacWorkspaces = await new PMACWorkspaceGetAllAction(fsWorkspaceManager).run()
 
@@ -24,9 +41,6 @@ export default class WorkspaceFetchPulled extends Command {
       if (pmacWorkspace.pmID) {
         promises.push(new PMWorkspaceFetchAction(postmanApiInstance, pmacWorkspace.pmID).run())
       }
-      // console.log(
-      //   `Local workspace ${pmacWorkspace.name} (${pmacWorkspace.type}) fetch starting...`,
-      // )
     }
 
     const pmWorkspaces = await Promise.all(promises)
@@ -38,7 +52,5 @@ export default class WorkspaceFetchPulled extends Command {
     }
 
     await Promise.all(pmacPromises)
-
-    // console.log('All workspaces updated.')
   }
 }

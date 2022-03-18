@@ -1,58 +1,84 @@
 import { Command, Flags } from '@oclif/core'
-
-import inquirer from 'inquirer'
-
-import { PMACWorkspaceChooseAction, PMACWorkspaceGetAllAction } from '../../postman/actions'
-import { postmanApiInstance } from '../../postman/api'
-import { fsWorkspaceManager } from '../../file-system'
-import { WorkspaceDeleteAction } from '../../postman/actions/workspace-delete.action'
-import { PMACWorkspaceDeleteAction } from '../../postman/actions/pmac-workspace-delete.action'
-import { PMWorkspaceDeleteAction } from '../../postman/actions/pm-workspace-delete.action'
+import { Listr, ListrTask } from 'listr2'
+import { PmacWorkspaceDeleteCtx, workspaceDeleteHelper } from '../../commands-helpers/workspace/delete.helper'
+import { workspaceSharedTasks } from '../../commands-helpers/shared/workspace-tasks'
 
 export default class WorkspaceDelete extends Command {
-  static description = 'Deletes PM workspace, default: removes workspace from both .pmac (repository) and PM account (remote).'
+  static description = `Deletes a workspace, allowing deleting a workspace from your Postman account, from pmac (your repo), or both. 
+  By default deletes both, for more information, use --help.`
 
   static examples = [
-    `$pmac workspace delete
-`,
+    'pmac workspace delete',
+    'pmac workspace delete -w ./.pmac/workspaces/personal/test-env_pmacf7367da5e7e34110aaeb956db8b7d777/pmac-workspace.json',
+    'pmac workspace delete -w ./.pmac/workspaces/personal/test-env_pmacf7367da5e7e34110aaeb956db8b7d777/pmac-workspace.json --pmac-only',
+    'pmac workspace delete --pm-only',
   ]
 
   static flags = {
-    'pm-only': Flags.boolean({ char: 'r', description: 'Removes workspace only from your PM account, keeps workspace in .pmac (repository)', required: false }),
-    'pmac-only': Flags.boolean({ char: 'l', description: 'Removes workspace only from .pmac, keeps workspace in your PM account (remote)', required: false }),
+    'pm-only': Flags.boolean({
+      char: 'r',
+      description: 'Deletes a workspace only from your Postman account, But do not delete the workspace from pmac (your repo).',
+      required: false,
+      default: false,
+    }),
+    'pmac-only': Flags.boolean({
+      char: 'l',
+      description: 'Deletes only pmac workspace (your repo), But do not delete the workspace from your Postman account.',
+      required: false,
+      default: false,
+    }),
+    'workspace-path': Flags.string({
+      char: 'w',
+      default: '',
+      helpValue: 'relative/path/to/your/pmac-workspace.json',
+      required: false,
+    }),
   }
 
   async run(): Promise<void> {
     const { flags } = await this.parse(WorkspaceDelete)
 
-    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(
-      fsWorkspaceManager,
-    ).run()
+    const isWorkspacePathDefined = Boolean(flags['workspace-path'])
+    const subTasks: ListrTask<PmacWorkspaceDeleteCtx>[] = [
+      workspaceSharedTasks.getAllPmacWorkspacesTask({
+        skip: isWorkspacePathDefined,
+      }),
+      workspaceSharedTasks.choosePmacWorkspaceTask({
+        customTitle: 'Choose workspace to delete',
+        skip: isWorkspacePathDefined,
+      }),
+      workspaceSharedTasks.loadWorkspaceByPathTask({
+        customTitle: 'Loading workspace by given path..',
+        skip: !isWorkspacePathDefined,
+      }),
+      workspaceDeleteHelper.deletePmAccountWorkspaceTask,
+      workspaceDeleteHelper.deletePmacWorkspaceTask,
+    ]
 
-    const chosenPMACWorkspace = await new PMACWorkspaceChooseAction(
-      inquirer,
-      pmacWorkspaces,
-      { customMessage: 'Choose workspace to delete' },
-    ).run()
+    const mainTask = new Listr<PmacWorkspaceDeleteCtx>({
+      title: 'Deleting workspace..',
+      task: async (_ctx, task) => task.newListr(subTasks),
+    },
+    {
+      ctx: {
+        pmOnly: flags['pm-only'],
+        pmacOnly: flags['pmac-only'],
+        pmacWorkspacePath: flags['workspace-path'],
+      },
+      rendererOptions: { showErrorMessage: false, collapse: false, showTimer: true },
+    })
 
-    let deleted
-    if (flags['pmac-only']) {
-      await new PMACWorkspaceDeleteAction(fsWorkspaceManager, chosenPMACWorkspace).run()
-      deleted = chosenPMACWorkspace.pmacID
-    } else if (flags['pm-only']) {
-      const { deletedPMWorkspaceId } = await new PMWorkspaceDeleteAction(postmanApiInstance, chosenPMACWorkspace).run()
-      deleted = deletedPMWorkspaceId
-    } else {
-      const { deletedPMWorkspaceId } = await new WorkspaceDeleteAction(
-        chosenPMACWorkspace,
-        fsWorkspaceManager,
-        postmanApiInstance,
-      ).run()
-      deleted = deletedPMWorkspaceId
+    const ctx = await mainTask.run()
+    if (ctx.deletePmId) {
+      this.log(
+        `Workspace ${ctx.pmacWorkspace?.name} (pmID: ${ctx.deletePmId}) deleted from your Postman account.`,
+      )
     }
 
-    this.log(
-      `Workspace ${chosenPMACWorkspace.name} id:${deleted} deleted from remote and repository successfully.`,
-    )
+    if (ctx.deletedPmacID) {
+      this.log(
+        `Workspace ${ctx.pmacWorkspace?.name} (pmacID: ${ctx.deletedPmacID}) deleted from pmac (repo).`,
+      )
+    }
   }
 }

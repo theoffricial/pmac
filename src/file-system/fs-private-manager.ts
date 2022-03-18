@@ -1,5 +1,5 @@
 // eslint-disable-next-line unicorn/prefer-node-protocol
-import { readJsonFile, writeJsonFile } from './fs-utils'
+import { pmacFsUtils } from './fs-utils'
 import { PMAC_FILE_SYS } from './fs-pmac.constants'
 
 const { MAIN_DIR: { PRIVATE_DIR } } = PMAC_FILE_SYS
@@ -17,7 +17,7 @@ export async function createPMACPrivateConfig(config: PMACPrivateConfig, options
   let currentConfig: PMACPrivateConfig = {}
 
   if (options?.update) {
-    currentConfig = await readJsonFile<PMACPrivateConfig>(path).catch(error => ({}))
+    currentConfig = await pmacFsUtils.readJsonFile<PMACPrivateConfig>(path).catch(error => ({}))
   }
 
   const contentToWrite: PMACPrivateConfig = {
@@ -25,13 +25,13 @@ export async function createPMACPrivateConfig(config: PMACPrivateConfig, options
     ...config,
   }
 
-  await writeJsonFile<PMACPrivateConfig>(path, contentToWrite)
+  await pmacFsUtils.writeJsonFile<PMACPrivateConfig>(path, contentToWrite)
 }
 
 export async function getPrivateConfig(): Promise<PMACPrivateConfig> {
   const { path } = PRIVATE_DIR.CONFIG_FILE
 
-  return readJsonFile<PMACPrivateConfig>(path).catch(error => {
+  return pmacFsUtils.readJsonFile<PMACPrivateConfig>(path).catch(error => {
     return {}
   })
 }

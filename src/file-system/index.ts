@@ -13,5 +13,6 @@ export * as PMACMap from './fs-pmac-map-utils'
 export * from './fs-pmac.constants'
 
 import * as pmacDotEnv from './dotenv'
+export * from './fs-utils'
 
 export { pmacDotEnv }

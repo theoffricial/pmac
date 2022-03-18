@@ -2,7 +2,7 @@
 import fsPromises from 'fs/promises'
 import { WorkspaceResource } from '../postman/api/types'
 import { PMAC_FILE_SYS } from './fs-pmac.constants'
-import { readJsonFile, writeJsonFile } from './fs-utils'
+import { pmacFsUtils } from './fs-utils'
 import { buildPMACWorkspaceDirPathByWid, getPMACWidByDirPath, getPMACWorkspaceByWid, writeWorkspaceDataJson } from './fs-workspace-manager'
 import { ResourceTypeMap, WORKSPACE_RESOURCES_DEFINITIONS, PM_RESOURCE_PREFIX } from './fs-workspace-resource.constants'
 import { globPromise } from './glob-promise'
@@ -31,12 +31,14 @@ export async function getPMACWorkspaceResourceByWrid<T extends WorkspaceResource
 }
 
 export async function getPMACWorkspaceResourceByPath<T extends WorkspaceResource>(path: string): Promise<ResourceTypeMap<T>> {
-  const workspaceResource: ResourceTypeMap<T> = await readJsonFile(path)
+  const workspaceResource: ResourceTypeMap<T> = await pmacFsUtils.readJsonFile(path)
   return workspaceResource
 }
 
 export function getPMACWorkspaceResourceIDByFileName(workspaceResourceFileName: string): PMACWorkspaceResourceID {
   // name.suffix.json
+  console.log('split issue for:', getPMACWorkspaceResourceIDByFileName.name)
+
   const [workspaceResourceName, suffix, _ext] = workspaceResourceFileName.split('.')
   const type = suffix.replace(PM_RESOURCE_PREFIX, '') as WorkspaceResource
   const parts = workspaceResourceName.split(WORKSPACE_RESOURCE_NAME_TO_ID_SEPARATOR)
@@ -48,6 +50,8 @@ export function getPMACWorkspaceResourceIDByFileName(workspaceResourceFileName: 
 }
 
 export function getPMACWorkspaceResourceIDByFilePath(path: string) {
+  console.log('split issue for:', getPMACWorkspaceResourceIDByFilePath.name)
+  console.log(path)
   const workspaceId = getPMACWidByDirPath(path)
   const { MAIN_DIR } = PMAC_FILE_SYS
   // ......./.pmac/workspaces/<type>/<name>/resource-type/resource-file-name.....
@@ -74,7 +78,7 @@ export function getPMACWorkspaceResourceIDByFilePath(path: string) {
 
 export async function writeWorkspaceResourceDataJson<T extends WorkspaceResource>(wrid: PMACWorkspaceResourceIDWithWID, resourceData: ResourceTypeMap<T>) {
   const path = buildPMACWorkspaceResourceFilePathByWrid(wrid)
-  await writeJsonFile(path, resourceData)
+  await pmacFsUtils.writeJsonFile(path, resourceData)
 }
 
 /** this funciton is responsible only for the PMAC related changes */
@@ -204,6 +208,7 @@ export async function getAllPMACWorkspaceResourcesMapByPattern<T extends Workspa
   const promises = []
 
   const map = new Map<string, ResourceTypeMap<T>>()
+  console.log('split issue for:', getAllPMACWorkspaceResourcesMapByPattern.name)
   for (const path of matches) {
     promises.push(getPMACWorkspaceResourceByPath<T>(path).then(resourceData => {
       const parts = path.split('/')

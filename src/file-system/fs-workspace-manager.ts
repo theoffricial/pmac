@@ -4,7 +4,7 @@ import fsPromises from 'fs/promises'
 // unify pm workspace json with pmac w json
 import { PMACWorkspace, PMACWorkspaceID } from './types'
 import { PMAC_FILE_SYS } from './fs-pmac.constants'
-import { readJsonFile, writeJsonFile } from './fs-utils'
+import { pmacFsUtils } from './fs-utils'
 import { WorkspaceResource, WorkspaceType } from '../postman/api/types'
 import { globMultiPromise } from './glob-promise'
 
@@ -33,7 +33,7 @@ export async function getPMACWorkspaceByWid(wid: PMACWorkspaceID): Promise<PMACW
 }
 
 export async function getPMACWorkspaceByPath(path: string): Promise<PMACWorkspace> {
-  const workspace: PMACWorkspace = await readJsonFile(path)
+  const workspace: PMACWorkspace = await pmacFsUtils.readJsonFile(path)
   return workspace
 }
 
@@ -80,7 +80,7 @@ export async function renamePMACWorkspaceName(wid: PMACWorkspaceID, newName: str
 export async function writeWorkspaceDataJson(workspace: PMACWorkspace) {
   const path = buildPMACWorkspaceDirPathByWid(workspace)
   const combined = `${path}/${PMAC_FILE_SYS.ENTITIES_CONVENTIONS.WORKSPACE_DATA_JSON.name}`
-  await writeJsonFile(combined, workspace)
+  await pmacFsUtils.writeJsonFile(combined, workspace)
 }
 
 /** Risky function! 2-steps, on failure there is risk for inconsistent data! */
