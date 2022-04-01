@@ -35,7 +35,7 @@
     "glob": "^7.2.0",
     "inquirer": "^8.2.0",
     "listr2": "^4.0.5",
-    "newman": "^5.3.1",
+    "newman": "^5.3.2",
     "newman-reporter-htmlextra": "^1.22.3",
     "openapi-to-postmanv2": "^2.13.0",
     "pad": "^3.2.0",
