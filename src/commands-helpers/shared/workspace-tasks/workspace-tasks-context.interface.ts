@@ -1,20 +1,37 @@
 import { PMACWorkspace } from '../../../file-system/types'
-import { WorkspaceType } from '../../../postman/api/types'
+import { PostmanWorkspace, PostmanWorkspaceMetadata, WorkspaceType } from '../../../postman/api/types'
 
 export namespace SharedWorkspacesTasksCtx {
 
-    export interface ICtxPmacWorkspaces {
-        pmacWorkspaces?: PMACWorkspace[],
+    export interface IPmacWorkspacesCtx {
+        pmacWorkspaces: PMACWorkspace[],
         workspaceTypeFilter?: WorkspaceType
     }
 
-    export interface ICtxSelectedWorkspace {
-        pmacWorkspace?: PMACWorkspace
+    export interface ISelectedPmacWorkspaceCtx {
+        pmacWorkspace: PMACWorkspace
     }
 
-    export interface ICtxPmacWorkspacePath {
-        pmacWorkspacePath?: string
+    export interface ISelectedPmacWorkspacePathCtx {
+        pmacWorkspacePath: string
     }
 
-    export type TCtxWorkspacesCombined = ICtxPmacWorkspaces & ICtxSelectedWorkspace
+    export interface IPostmanWorkspacesCtx {
+        postmanWorkspaces: PostmanWorkspace[]
+    }
+
+    export interface ISelectedPostmanWorkspaceCtx {
+        postmanWorkspace: PostmanWorkspace
+    }
+    export interface IPostmanWorkspacesMetadataCtx {
+        postmanWorkspacesMetadata: PostmanWorkspaceMetadata[]
+    }
+
+    export interface ISelectedPostmanWorkspaceMetadataCtx {
+        postmanWorkspaceMetadata: PostmanWorkspaceMetadata
+    }
+
+    export type TPmacWorkspacesCombinedCtx = IPmacWorkspacesCtx & ISelectedPmacWorkspaceCtx
+    export type TPostmanWorkspacesCombinedCtx = IPostmanWorkspacesCtx & ISelectedPostmanWorkspaceCtx
+    export type TPostmanWorkspacesMetadataCombinedCtx = IPostmanWorkspacesMetadataCtx & ISelectedPostmanWorkspaceMetadataCtx
 }

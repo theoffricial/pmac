@@ -15,7 +15,7 @@ export class PMWorkspacePullToPMACAction implements IPMACAction<PMACWorkspace> {
   ) {}
 
   async run() {
-    const currentPmacWorkspace = await this.fsWorkspaceManager.getPMACWorkspaceByPMWorkspaceId(this.pmWorkspace.id)
+    const currentPmacWorkspace = await this.fsWorkspaceManager.getPMACWorkspaceByPostmanWorkspaceId(this.pmWorkspace.id)
     let pmacWorkspace: PMACWorkspace
 
     // existing pmac workspace

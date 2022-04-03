@@ -46,10 +46,10 @@ async function createWorkspacesDir() {
   await fsPromises.mkdir(path)
 }
 
-async function createTypesWorkspacesDir() {
+export async function createTypesWorkspacesDir() {
   const { path: personalPath } = PMAC_FILE_SYS.MAIN_DIR.WORKSPACES_DIR.PERSONAL
   const { path: teamPath } = PMAC_FILE_SYS.MAIN_DIR.WORKSPACES_DIR.TEAM
-  await Promise.all([
+  await Promise.allSettled([
     fsPromises.mkdir(personalPath),
     fsPromises.mkdir(teamPath),
   ])
@@ -63,4 +63,14 @@ async function createPrivateDir() {
 
 export function isMainDirExists() {
   return fs.existsSync(PMAC_FILE_SYS.MAIN_DIR.path)
+}
+
+export function isPersonalWorkspacesDirExists() {
+  const { path } = PMAC_FILE_SYS.MAIN_DIR.WORKSPACES_DIR.PERSONAL
+  return fs.existsSync(path)
+}
+
+export function isTeamWorkspacesDirExists() {
+  const { path } = PMAC_FILE_SYS.MAIN_DIR.WORKSPACES_DIR.TEAM
+  return fs.existsSync(path)
 }

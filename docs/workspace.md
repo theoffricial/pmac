@@ -33,21 +33,32 @@ EXAMPLES
 
 ## `pmac workspace delete`
 
-Deletes PM workspace, default: removes workspace from both .pmac (repository) and PM account (remote).
+Deletes a workspace, allowing deleting a workspace from your Postman account, from pmac (your repo), or both. 
 
 ```
 USAGE
-  $ pmac workspace delete [-r] [-l]
+  $ pmac workspace delete [-r] [-l] [-w <value>]
 
 FLAGS
-  -l, --pmac-only  Removes workspace only from .pmac, keeps workspace in your PM account (remote)
-  -r, --pm-only    Removes workspace only from your PM account, keeps workspace in .pmac (repository)
+  -l, --pmac-only                                                 Deletes only pmac workspace (your repo), But do not
+                                                                  delete the workspace from your Postman account.
+  -r, --pm-only                                                   Deletes a workspace only from your Postman account,
+                                                                  But do not delete the workspace from pmac (your repo).
+  -w, --workspace-path=relative/path/to/your/pmac-workspace.json
 
 DESCRIPTION
-  Deletes PM workspace, default: removes workspace from both .pmac (repository) and PM account (remote).
+  Deletes a workspace, allowing deleting a workspace from your Postman account, from pmac (your repo), or both.
+
+  By default deletes both, for more information, use --help.
 
 EXAMPLES
-  $pmac workspace delete
+  $ pmac workspace delete
+
+  $ pmac workspace delete -w ./.pmac/workspaces/personal/test-env_pmacf7367da5e7e34110aaeb956db8b7d777/pmac-workspace.json
+
+  $ pmac workspace delete -w ./.pmac/workspaces/personal/test-env_pmacf7367da5e7e34110aaeb956db8b7d777/pmac-workspace.json --pmac-only
+
+  $ pmac workspace delete --pm-only
 ```
 
 ## `pmac workspace fetch`
@@ -62,7 +73,7 @@ DESCRIPTION
   Fetches all pulled workspaces up-to-date.
 
 EXAMPLES
-  $pmac workspace fetch
+  $ pmac workspace fetch
 ```
 
 ## `pmac workspace pull`

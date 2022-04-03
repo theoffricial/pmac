@@ -52,7 +52,7 @@ export default class WorkspaceCreate extends Command {
       ctx: {
         workspaceName: flags.name || '',
         workspaceType: flags.type,
-      },
+      } as any,
       rendererOptions: { showTimer: true },
     })
 

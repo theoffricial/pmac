@@ -4,13 +4,12 @@ import { postmanApiInstance } from '../../postman/api'
 import { SharedWorkspacesTasksCtx } from '../shared/workspace-tasks/workspace-tasks-context.interface'
 
 type TCtxWorkspaceData =
-    SharedWorkspacesTasksCtx.TCtxWorkspacesCombined &
-    SharedWorkspacesTasksCtx.ICtxPmacWorkspacePath
+    SharedWorkspacesTasksCtx.TPmacWorkspacesCombinedCtx &
+    SharedWorkspacesTasksCtx.ISelectedPmacWorkspacePathCtx
 
 export interface PmacWorkspaceDeleteCtx extends TCtxWorkspaceData {
     deletedPmacID?: string
     deletePmId?: string
-    pmacWorkspacePath?: string
     pmacOnly?: boolean
     pmOnly?: boolean
 }

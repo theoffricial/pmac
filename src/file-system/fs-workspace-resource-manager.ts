@@ -50,8 +50,6 @@ export function getPMACWorkspaceResourceIDByFileName(workspaceResourceFileName: 
 }
 
 export function getPMACWorkspaceResourceIDByFilePath(path: string) {
-  console.log('split issue for:', getPMACWorkspaceResourceIDByFilePath.name)
-  console.log(path)
   const workspaceId = getPMACWidByDirPath(path)
   const { MAIN_DIR } = PMAC_FILE_SYS
   // ......./.pmac/workspaces/<type>/<name>/resource-type/resource-file-name.....
@@ -246,6 +244,10 @@ export async function deletePMACWorkspaceResourceFileWithoutName(wrid: Omit<PMAC
 export async function getPMACWridWithoutName(wrid: Omit<PMACWorkspaceResourceIDWithWID, 'name'>) {
   const pattern = buildPMACWorkspaceResourceFilePathByWrid({ ...wrid, name: '*' })
   const [path] = await globPromise(pattern)
+
+  if (!path) {
+    return
+  }
 
   const fullWrid = getPMACWorkspaceResourceIDByFilePath(path)
   return fullWrid

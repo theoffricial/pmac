@@ -3,7 +3,7 @@ import { fsWorkspaceManager, PMACMap } from '../../file-system'
 import { WorkspaceType, WorkspaceTypeValues } from '../../postman/api/types'
 import { SharedWorkspacesTasksCtx } from '../shared/workspace-tasks/workspace-tasks-context.interface'
 
-export interface PmacWorkspaceCreateCtx extends SharedWorkspacesTasksCtx.ICtxSelectedWorkspace {
+export interface PmacWorkspaceCreateCtx extends SharedWorkspacesTasksCtx.ISelectedPmacWorkspaceCtx {
     workspaceName: string
     workspaceType: WorkspaceType
     workspaceDescription?: string

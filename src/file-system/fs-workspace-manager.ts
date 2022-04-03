@@ -7,6 +7,7 @@ import { PMAC_FILE_SYS } from './fs-pmac.constants'
 import { pmacFsUtils } from './fs-utils'
 import { WorkspaceResource, WorkspaceType } from '../postman/api/types'
 import { globMultiPromise } from './glob-promise'
+import { fsMainManager } from '.'
 
 const { WORKSPACE_NAME_TO_ID_SEPARATOR } = PMAC_FILE_SYS.ENTITIES_CONVENTIONS.NAME_CONVENTIONS
 
@@ -73,7 +74,7 @@ export async function renamePMACWorkspaceName(wid: PMACWorkspaceID, newName: str
   await fsPromises.rename(currentPath, newPath)
 
   // update workspace name in data-json
-  const workspace = await getPMACWorkspaceByWid(wid)
+  const workspace = await getPMACWorkspaceByWid({ ...wid, name: newName })
   await writeWorkspaceDataJson({ ...workspace, name: newName })
 }
 
@@ -114,7 +115,7 @@ export async function getAllPMACWorkspaces(type?: WorkspaceType): Promise<PMACWo
 
   const workspaces = await Promise.all(promises)
 
-  return workspaces
+  return workspaces || []
 }
 
 async function getAllExistsPMACWorkspacesPaths(type?: WorkspaceType) {
@@ -132,12 +133,14 @@ async function getAllExistsPMACWorkspacesPaths(type?: WorkspaceType) {
   return paths
 }
 
-import { isMainDirExists } from './fs-main-dir-manager'
-
 export async function createPMACWorkspaceDir(pmacWorkspace: PMACWorkspace) {
-  if (!isMainDirExists()) {
+  if (!fsMainManager.isMainDirExists()) {
     // replace this error with global errors
     throw new Error('pmac not found, run \'pmac init\'')
+  }
+
+  if (!fsMainManager.isPersonalWorkspacesDirExists() || !fsMainManager.isTeamWorkspacesDirExists()) {
+    await fsMainManager.createTypesWorkspacesDir()
   }
 
   const pmacWorkspaceDirPath = buildPMACWorkspaceDirPathByWid(pmacWorkspace)
@@ -152,7 +155,7 @@ export async function createPMACWorkspaceDir(pmacWorkspace: PMACWorkspace) {
   ])
 }
 
-export async function getPMACWorkspaceByPMWorkspaceId(pmWorkspaceId: string) {
+export async function getPMACWorkspaceByPostmanWorkspaceId(pmWorkspaceId: string) {
   const pmacWorkspaces = await getAllPMACWorkspaces()
   return pmacWorkspaces.find(pmacW => pmacW.pmID === pmWorkspaceId)
 }

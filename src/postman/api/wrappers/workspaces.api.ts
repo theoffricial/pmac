@@ -50,7 +50,9 @@ export default class PostmanWorkspacesAPI {
     id: string,
     update: Partial<PostmanWorkspace>,
     config?: AxiosRequestConfig<any>,
-  ) {
+  ): Promise<PmacAxiosResponse<{
+    workspace: { name: string, id: string };
+  }>> {
     return this.pmacAxiosInstance.put(
       this.workspacesAPIUrls.updateWorkspace(id),
       update,

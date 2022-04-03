@@ -1,56 +1,97 @@
-import { Command } from '@oclif/core'
+import { Command, Flags } from '@oclif/core'
 
-import { PMACWorkspaceGetAllAction, PMWorkspaceFetchAction, PMWorkspacePullToPMACAction } from '../../postman/actions'
-import { postmanApiInstance } from '../../postman/api'
-import { fsWorkspaceManager, fsWorkspaceResourceManager } from '../../file-system'
-import { PostmanWorkspace } from '../../postman/api/types'
+import { WorkspaceTypeValues } from '../../postman/api/types'
+import { Listr } from 'listr2'
+import { IFetchAllTaskCtx } from '../../commands-helpers/workspace/fetch.helper/types'
+import { mainFetchTask } from '../../commands-helpers/workspace/fetch.helper/index'
 import { PMACWorkspace } from '../../file-system/types'
-import { Listr, ListrTask } from 'listr2'
-import { PmacWorkspaceFetchCtx } from '../../commands-helpers/workspace/fetch.helper'
-import { workspaceSharedTasks } from '../../commands-helpers/shared/workspace-tasks'
+import { SharedWorkspacesTasksCtx, workspaceSharedTasks } from '../../commands-helpers/shared/workspace-tasks'
 
 export default class WorkspaceFetch extends Command {
-  static description = 'Fetches all pulled workspaces up-to-date.'
+  static description = 'Fetches one/all workspaces that are already have sync between pmac and Postman, and updating all new data from Postman to pmac.'
 
   static examples = [
     'pmac workspace fetch',
+    'pmac workspace fetch -w .pmac/workspaces/team/<your-workspace>/pmac-workspace.json',
+    'pmac workspace fetch --single | -s',
   ]
 
+  static flags = {
+    single: Flags.boolean({
+      default: false,
+      required: false,
+      char: 's',
+    }),
+    'workspace-path': Flags.string({
+      char: 'w',
+      default: '',
+      helpValue: 'relative/path/to/your/pmac-workspace.json',
+      required: false,
+    }),
+    'type-filter': Flags.enum({
+      required: false,
+      char: 'f',
+      options: WorkspaceTypeValues,
+    }),
+  }
+
   async run(): Promise<void> {
-    await this.parse(WorkspaceFetch)
+    const { flags } = await this.parse(WorkspaceFetch)
 
-    // const subTasks: ListrTask<PmacWorkspaceFetchCtx>[] = [
-    //   workspaceSharedTasks.getAllPmacWorkspacesTask({}),
-    // ]
+    const fetchSingleWorkspaceTask = new Listr<{ pmacWorkspace: PMACWorkspace, customFetchTitle: string, pmacWorkspacePath: string }>(
+      [
+        {
+          enabled: ctx => {
+            if (flags.single) {
+              ctx.customFetchTitle = 'Loading chosen pmac workspace'
+              return true
+            }
 
-    // const mainTask = new Listr<PmacWorkspaceFetchCtx>({
-    //   title: 'Fetching your Postman workspaces to pmac workspaces',
-    //   task: async (_ctx, task) => task.newListr(subTasks),
-    // },
-    // {
-    //   ctx: {},
-    //   rendererOptions: { showErrorMessage: false, collapse: false, showTimer: true },
-    // })
+            return false
+          },
+          title: 'Fetching a single chosen workspace',
+          task: async (ctx, task) => task.newListr<SharedWorkspacesTasksCtx.TPmacWorkspacesCombinedCtx>([
+            workspaceSharedTasks.loadAllPmacWorkspacesTask(),
+            workspaceSharedTasks.choosePmacWorkspaceTask(),
+          ]),
+        },
+        {
+          enabled: ctx => {
+            if (flags['workspace-path'] && !flags.single) {
+              ctx.customFetchTitle = 'Loading pmac workspace from path'
+              return true
+            }
 
-    // const ctx = await mainTask.run()
+            return false
+          },
+          title: 'Fetching a single workspace by path',
+          task: async (ctx, task) => task.newListr([
+            workspaceSharedTasks.loadWorkspaceByPathTask(flags['workspace-path']),
+          ]),
+        },
+      ],
+    )
 
-    const pmacWorkspaces = await new PMACWorkspaceGetAllAction(fsWorkspaceManager).run()
-
-    const promises: Promise<PostmanWorkspace>[] = []
-    for (const pmacWorkspace of pmacWorkspaces) {
-      if (pmacWorkspace.pmID) {
-        promises.push(new PMWorkspaceFetchAction(postmanApiInstance, pmacWorkspace.pmID).run())
-      }
+    let singlePmacWorkspace: PMACWorkspace[]
+    let customFetchTitle: string | undefined
+    if (flags.single || flags['workspace-path']) {
+      const ctx = await fetchSingleWorkspaceTask.run()
+      singlePmacWorkspace = [ctx.pmacWorkspace]
+      customFetchTitle = ctx.customFetchTitle
     }
 
-    const pmWorkspaces = await Promise.all(promises)
-    const pmacPromises: Promise<PMACWorkspace>[] = []
-    for (const pmWorkspace of pmWorkspaces) {
-      pmacPromises.push(
-        new PMWorkspacePullToPMACAction(fsWorkspaceManager, fsWorkspaceResourceManager, postmanApiInstance, pmWorkspace).run(),
-      )
-    }
+    const fetchTask = new Listr({
+      title: 'Fetching...',
+      task: async (ctx, task) => task.newListr<IFetchAllTaskCtx>(
+        mainFetchTask({ title: customFetchTitle }),
+        {
+          ctx: { customPmacWorkspaces: singlePmacWorkspace } as any,
 
-    await Promise.all(pmacPromises)
+          rendererOptions: { showTimer: true, collapse: false },
+        }),
+    })
+
+    await fetchTask.run()
   }
 }
+
