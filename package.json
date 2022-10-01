@@ -31,7 +31,7 @@
     "@oclif/plugin-plugins": "^2.0.1",
     "axios": "^0.25.0",
     "camelcase": "^6.3.0",
-    "dotenv": "^16.0.0",
+    "dotenv": "^16.0.3",
     "glob": "^7.2.0",
     "inquirer": "^8.2.0",
     "listr2": "^4.0.5",
