@@ -37,7 +37,7 @@
     "listr2": "^4.0.5",
     "newman": "^5.3.1",
     "newman-reporter-htmlextra": "^1.22.3",
-    "openapi-to-postmanv2": "^2.13.0",
+    "openapi-to-postmanv2": "^2.14.1",
     "pad": "^3.2.0",
     "uuid": "^8.3.2"
   },
