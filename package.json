@@ -28,7 +28,7 @@
     "@oclif/core": "^1",
     "@oclif/plugin-autocomplete": "^1.1.1",
     "@oclif/plugin-help": "^5",
-    "@oclif/plugin-plugins": "^2.0.1",
+    "@oclif/plugin-plugins": "^2.1.8",
     "axios": "^0.25.0",
     "camelcase": "^6.3.0",
     "dotenv": "^16.0.0",
