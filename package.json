@@ -26,7 +26,7 @@
   "dependencies": {
     "@oclif/command": "^1.8.16",
     "@oclif/core": "^1",
-    "@oclif/plugin-autocomplete": "^1.1.1",
+    "@oclif/plugin-autocomplete": "^1.4.4",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.0.1",
     "axios": "^0.25.0",
